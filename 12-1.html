@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS变量 - 何汶军</title>
+    <style>
+        :root {
+            --yuan-primary-color: #3498db;
+            --yuan-secondary-color: #2ecc71;
+            --yuan-bg-color: #f5f5f5;
+            --yuan-text-color: #333;
+            --yuan-font-size: 18px;
+            --yuan-border-radius: 8px;
+            --yuan-padding: 20px;
+            --yuan-margin: 15px;
+        }
+
+        .yuan_body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: var(--yuan-bg-color);
+            color: var(--yuan-text-color);
+            font-size: var(--yuan-font-size);
+            margin: 0;
+            padding: var(--yuan-padding);
+        }
+
+        .yuan_container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .yuan_header {
+            text-align: center;
+            padding: var(--yuan-padding);
+            background: linear-gradient(135deg, var(--yuan-primary-color), var(--yuan-secondary-color));
+            color: white;
+            border-radius: var(--yuan-border-radius);
+            margin-bottom: var(--yuan-margin);
+        }
+
+        .yuan_header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .yuan_header p {
+            margin: 10px 0 0;
+            font-size: 1.1em;
+        }
+
+        .yuan_card {
+            background: white;
+            padding: var(--yuan-padding);
+            margin-bottom: var(--yuan-margin);
+            border-radius: var(--yuan-border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--yuan-primary-color);
+        }
+
+        .yuan_card h2 {
+            color: var(--yuan-primary-color);
+            margin-top: 0;
+        }
+
+        .yuan_demo-box {
+            padding: var(--yuan-padding);
+            margin: var(--yuan-margin) 0;
+            border-radius: var(--yuan-border-radius);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .yuan_demo-primary {
+            background-color: var(--yuan-primary-color);
+            color: white;
+        }
+
+        .yuan_demo-secondary {
+            background-color: var(--yuan-secondary-color);
+            color: white;
+        }
+
+        .yuan_demo-gradient {
+            background: linear-gradient(90deg, var(--yuan-primary-color), var(--yuan-secondary-color));
+            color: white;
+        }
+
+        .yuan_code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: var(--yuan-border-radius);
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .yuan_code .yuan_comment {
+            color: #75715e;
+        }
+
+        .yuan_code .yuan_keyword {
+            color: #66d9ef;
+        }
+
+        .yuan_code .yuan_value {
+            color: #a6e22e;
+        }
+
+        .yuan_footer {
+            text-align: center;
+            padding: var(--yuan-padding);
+            margin-top: var(--yuan-margin);
+            color: #888;
+        }
+
+        .yuan_footer a {
+            color: var(--yuan-primary-color);
+            text-decoration: none;
+        }
+
+        .yuan_footer a:hover {
+            text-decoration: underline;
+        }
+
+        .yuan_var-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .yuan_var-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .yuan_var-list li:last-child {
+            border-bottom: none;
+        }
+
+        .yuan_var-name {
+            font-family: Consolas, monospace;
+            color: var(--yuan-primary-color);
+            font-weight: bold;
+        }
+
+        .yuan_var-value {
+            color: var(--yuan-secondary-color);
+        }
+    </style>
+</head>
+<body class="yuan_body">
+    <div class="yuan_container">
+        <header class="yuan_header">
+            <h1>CSS 变量演示</h1>
+            <p>何汶军 - 高级网页设计</p>
+        </header>
+
+        <div class="yuan_card">
+            <h2>什么是 CSS 变量？</h2>
+            <p>CSS 变量（又称自定义属性）允许你定义可重复使用的值，并在整个样式表中引用它们。使用 <strong>var()</strong> 函数来引用变量值。</p>
+        </div>
+
+        <div class="yuan_card">
+            <h2>定义的变量</h2>
+            <ul class="yuan_var-list">
+                <li><span class="yuan_var-name">--yuan-primary-color</span> : <span class="yuan_var-value">#3498db</span> - 主题色</li>
+                <li><span class="yuan_var-name">--yuan-secondary-color</span> : <span class="yuan_var-value">#2ecc71</span> - 辅助色</li>
+                <li><span class="yuan_var-name">--yuan-bg-color</span> : <span class="yuan_var-value">#f5f5f5</span> - 背景色</li>
+                <li><span class="yuan_var-name">--yuan-text-color</span> : <span class="yuan_var-value">#333</span> - 文字颜色</li>
+                <li><span class="yuan_var-name">--yuan-font-size</span> : <span class="yuan_var-value">18px</span> - 字体大小</li>
+                <li><span class="yuan_var-name">--yuan-border-radius</span> : <span class="yuan_var-value">8px</span> - 圆角</li>
+                <li><span class="yuan_var-name">--yuan-padding</span> : <span class="yuan_var-value">20px</span> - 内边距</li>
+                <li><span class="yuan_var-name">--yuan-margin</span> : <span class="yuan_var-value">15px</span> - 外边距</li>
+            </ul>
+        </div>
+
+        <div class="yuan_card">
+            <h2>代码示例</h2>
+            <div class="yuan_code">
+<span class="yuan_comment">/* 在 :root 中定义变量 */</span>
+<span class="yuan_keyword">:root</span> {
+    <span class="yuan_keyword">--yuan-primary-color</span>: <span class="yuan_value">#3498db</span>;
+    <span class="yuan_keyword">--yuan-secondary-color</span>: <span class="yuan_value">#2ecc71</span>;
+    <span class="yuan_keyword">--yuan-bg-color</span>: <span class="yuan_value">#f5f5f5</span>;
+}
+
+<span class="yuan_comment">/* 使用 var() 引用变量 */</span>
+<span class="yuan_keyword">.yuan_box</span> {
+    <span class="yuan-keyword">background-color</span>: <span class="yuan_value">var(--yuan-primary-color)</span>;
+    <span class="yuan-keyword">padding</span>: <span class="yuan_value">var(--yuan-padding)</span>;
+    <span class="yuan-keyword">border-radius</span>: <span class="yuan-value">var(--yuan-border-radius)</span>;
+}
+            </div>
+        </div>
+
+        <div class="yuan_card">
+            <h2>效果演示</h2>
+            <div class="yuan_demo-box yuan_demo-primary">使用 --yuan-primary-color</div>
+            <div class="yuan_demo-box yuan_demo-secondary">使用 --yuan-secondary-color</div>
+            <div class="yuan_demo-box yuan_demo-gradient">使用渐变组合</div>
+        </div>
+
+        <div class="yuan_card">
+            <h2>CSS 变量的优势</h2>
+            <p><strong>1. 便于维护：</strong>修改变量值即可全局生效</p>
+            <p><strong>2. 主题切换：</strong>通过更改变量实现暗色/亮色主题</p>
+            <p><strong>3. 代码复用：</strong>避免重复书写相同的值</p>
+            <p><strong>4. 动态修改：</strong>可通过 JavaScript 动态改变</p>
+        </div>
+
+        <footer class="yuan_footer">
+            <p>何汶军 - 高级网页设计课程</p>
+            <p><a href="index.html">返回首页</a></p>
+        </footer>
+    </div>
+</body>
+</html>
