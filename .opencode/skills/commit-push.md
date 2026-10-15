@@ -7,7 +7,7 @@
 1. 检查当前 git 状态
 2. 暂存所有变更
 3. 提交变更（commit message 使用中文描述）
-4. 推送到远程仓库
+4. 推送到远程仓库（使用内嵌认证）
 
 ## 执行命令
 
@@ -21,12 +21,13 @@ git add .
 # 3. 提交
 git commit -m "更新项目文件"
 
-# 4. 推送到远程
-git push origin HEAD
+# 4. 推送到远程（认证信息内嵌URL）
+git push https://18982681971:<token>@gitee.com/hwjcqq/hewenjun114.git master
 ```
 
 ## 注意事项
 
-- 如果用户指定了 commit message，使用用户提供的
-- 如果推送失败，检查远程仓库认证状态
+- Gitee 单文件不能超过 100MB，推送前需检查是否有超大文件
+- 如果历史中曾提交过大文件，需使用 git filter-branch 或 BFG 清除
 - 推送前确认当前分支正确
+- 如果用户指定了 commit message，使用用户提供的
