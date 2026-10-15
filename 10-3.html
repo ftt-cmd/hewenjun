@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-3 媒体查询 - 全屏变色盒子</title>
+    <style>
+        *{margin: 0;padding: 0;}
+
+        /* 扩展：用 rem 做长度单位，根字号随视口变化，文字大小随之变化 */
+        html{
+            font-size: 14px;   /* 默认（手机）根字号 */
+        }
+        /* 平板 */
+        @media (min-width: 768px){
+            html{ font-size: 18px; }
+        }
+        /* 桌面 */
+        @media (min-width: 1200px){
+            html{ font-size: 24px; }
+        }
+
+        /* 全屏盒子 */
+        .box{
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #2ed573;   /* 默认背景：绿 */
+            transition: background 0.5s;
+        }
+
+        .box h1{
+            color: #fff;
+            font-family: "微软雅黑", sans-serif;
+            letter-spacing: 4px;
+            /* 文字大小使用 rem，随视口自动变化 */
+            font-size: 3rem;
+        }
+
+        /* ===== media query：视口变化时背景颜色变化 ===== */
+        /* 手机：< 768px，绿色 */
+        @media (max-width: 767px){
+            .box{ background: #2ed573; }
+        }
+        /* 平板：768 ~ 1199px，橙色 */
+        @media (min-width: 768px) and (max-width: 1199px){
+            .box{ background: #ffa502; }
+        }
+        /* 桌面：>= 1200px，蓝色 */
+        @media (min-width: 1200px){
+            .box{ background: #3742fa; }
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>何汶军</h1>
+    </div>
+</body>
+</html>

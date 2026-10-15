@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>足球赛事精选资讯网页 - 何汶军114</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f5f7f5;
+    color: #1a2e22;
+  }
+
+  /* ===== 公共样式 ===== */
+  .container {
+    width: 1100px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #102a1e;
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 4px solid #0d7a48;
+  }
+
+  /* ===== 1. 导航栏 ===== */
+  .navbar {
+    background: #0d7a48;
+    color: #fff;
+  }
+  .navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .logo-icon { font-size: 26px; }
+  .nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 32px;
+  }
+  .nav-menu a {
+    color: #e8f5ee;
+    text-decoration: none;
+    font-size: 15px;
+    transition: opacity .2s;
+  }
+  .nav-menu a:hover { opacity: 0.75; }
+  .nav-menu a.active {
+    color: #ffd54f;
+    font-weight: bold;
+  }
+
+  /* ===== 2. 上图下文：精选赛事卡片 ===== */
+  .featured {
+    padding: 40px 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .match-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .match-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+  .card-body {
+    padding: 16px;
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: 12px;
+    color: #0d7a48;
+    background: #e8f5ee;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: #6b7b70;
+    line-height: 1.6;
+  }
+
+  /* ===== 3. 左图右文：足球资讯列表 ===== */
+  .news-section {
+    padding: 20px 0 50px;
+  }
+  .news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .news-item {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .news-item img {
+    width: 220px;
+    height: 130px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .news-info {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .news-tag {
+    font-size: 12px;
+    color: #e85d04;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .news-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .news-desc {
+    font-size: 13px;
+    color: #6b7b70;
+    line-height: 1.6;
+  }
+
+  /* ===== 页脚 ===== */
+  .footer {
+    background: #102a1e;
+    color: #8a9b91;
+    text-align: center;
+    padding: 18px 0;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- 1. 导航栏 -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <div class="logo">
+        <span class="logo-icon">⚽</span>
+        <span>足球星球 · 何汶军114</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#" class="active">首页</a></li>
+        <li><a href="#">赛事</a></li>
+        <li><a href="#">资讯</a></li>
+        <li><a href="#">积分榜</a></li>
+        <li><a href="#">关于</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 2. 上图下文：精选赛事 -->
+  <section class="featured">
+    <div class="container">
+      <h2 class="section-title">精选赛事 · 何汶军</h2>
+      <div class="card-grid">
+        <div class="match-card">
+          <img src="img/fb1.jpg" alt="英超双红会">
+          <div class="card-body">
+            <span class="card-tag">英超</span>
+            <div class="card-title">双红会：曼联 vs 利物浦</div>
+            <div class="card-desc">老特拉福德球场，本轮英超焦点战，两队近5次交锋利物浦3胜2平保持不败。</div>
+          </div>
+        </div>
+        <div class="match-card">
+          <img src="img/fb2.jpg" alt="西甲国家德比">
+          <div class="card-body">
+            <span class="card-tag">西甲</span>
+            <div class="card-title">国家德比：皇马 vs 巴萨</div>
+            <div class="card-desc">伯纳乌球场，西甲榜首大战，皇马主场迎战劲敌巴萨，全场预计爆满。</div>
+          </div>
+        </div>
+        <div class="match-card">
+          <img src="img/fb3.jpg" alt="欧冠半决赛">
+          <div class="card-body">
+            <span class="card-tag">欧冠</span>
+            <div class="card-title">欧冠半决赛：拜仁 vs 曼城</div>
+            <div class="card-desc">安联球场，欧冠半决赛首回合，德甲霸主迎战英超冠军，悬念拉满。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 左图右文：足球资讯 -->
+  <section class="news-section">
+    <div class="container">
+      <h2 class="section-title">足球资讯 · 何汶军</h2>
+      <div class="news-list">
+        <div class="news-item">
+          <img src="img/fb4.jpg" alt="欧冠战报">
+          <div class="news-info">
+            <span class="news-tag">战报</span>
+            <div class="news-title">皇马3-1击败切尔西，欧冠八强战占得先机</div>
+            <div class="news-desc">维尼修斯梅开二度，罗德里戈破门，皇马在伯纳乌拿下首回合胜利，晋级形势一片大好。</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <img src="img/fb5.jpg" alt="球员动态">
+          <div class="news-info">
+            <span class="news-tag">动态</span>
+            <div class="news-title">哈兰德本赛季联赛进球突破40大关</div>
+            <div class="news-desc">曼城前锋哈兰德在本轮英超中再入两球，本赛季各项赛事进球数已达48球，状态火热。</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <img src="img/fb6.jpg" alt="青训新闻">
+          <div class="news-info">
+            <span class="news-tag">青训</span>
+            <div class="news-title">中国青训营启动，百名少年奔赴海外集训</div>
+            <div class="news-desc">由足协牵头的青少年足球培养计划正式启动，首批100名小球员将前往欧洲接受为期两年的系统训练。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p>足球赛事精选资讯网页 · 何汶军 · 学号114 · 高级网页设计I 实验作业</p>
+  </footer>
+
+</body>
+</html>

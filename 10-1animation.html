@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 多重动画盒子</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a2e; /* 深色背景突出盒子 */
+            font-family: sans-serif;
+        }
+
+        .animated-box {
+            width: 120px;
+            height: 120px;
+            /* 
+              核心技巧：使用逗号分隔多个动画
+              1. colorShift: 背景颜色4色变化
+              2. bounce: 上下位移
+              3. spin: 旋转
+              4. morphShape: 圆角变化（方形变圆形再变方形）
+              5. pulse: 缩放脉冲
+            */
+            animation: 
+                colorShift 4s infinite ease-in-out,
+                bounce 2s infinite ease-in-out,
+                spin 6s infinite linear,
+                morphShape 4s infinite ease-in-out,
+                pulse 2s infinite ease-in-out;
+            
+            /* 添加阴影增加立体感，阴影颜色也会随背景变化（通过半透明黑色叠加） */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 1. 背景颜色变化动画 (4种颜色) */
+        @keyframes colorShift {
+            0%   { background-color: #ff6b6b; } /* 珊瑚红 */
+            25%  { background-color: #feca57; } /* 向日葵黄 */
+            50%  { background-color: #48dbfb; } /* 天空蓝 */
+            75%  { background-color: #ff9ff3; } /* 樱花粉 */
+            100% { background-color: #ff6b6b; } /* 回到红色闭环 */
+        }
+
+        /* 2. 上下弹跳动画 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-40px); }
+        }
+
+        /* 3. 旋转动画 */
+        @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 4. 形状变幻动画 (方变圆) */
+        @keyframes morphShape {
+            0%, 100% { border-radius: 10px; }
+            50%      { border-radius: 50%; }
+        }
+
+        /* 5. 缩放脉冲动画 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.2); }
+        }
+
+        /* 
+          注意：当多个动画同时改变 transform 属性时，后声明的动画会覆盖前面的。
+          为了让旋转、位移和缩放同时生效，更优雅的做法是组合在一个 transform 中，
+          或者使用独立的 CSS 属性（如 translate, rotate, scale，现代浏览器已支持）。
+          
+          为了展示最兼容的纯CSS多重动画写法，上面分开写了。
+          如果在你的浏览器中旋转/位移/缩放有冲突，请看下方优化版本的写法：
+        */
+
+        /* --- 优化组合版（取消注释下方即可使用） --- */
+        /*
+        .animated-box-optimized {
+            width: 120px;
+            height: 120px;
+            animation: 
+                colorShift 4s infinite ease-in-out,
+                combinedTransform 2s infinite ease-in-out,
+                morphShape 4s infinite ease-in-out;
+        }
+
+        @keyframes combinedTransform {
+            0%   { transform: translateY(0) rotate(0deg) scale(1); }
+            25%  { transform: translateY(-20px) rotate(90deg) scale(1.1); }
+            50%  { transform: translateY(-40px) rotate(180deg) scale(1.2); }
+            75%  { transform: translateY(-20px) rotate(270deg) scale(1.1); }
+            100% { transform: translateY(0) rotate(360deg) scale(1); }
+        }
+        */
+    </style>
+</head>
+<body>
+    <div class="animated-box"></div>
+    <!-- <div class="animated-box-optimized"></div> -->
+</body>
+</html>

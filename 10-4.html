@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-4 媒体查询 - 八盒响应式布局</title>
+    <style>
+        *{margin: 0;padding: 0;}
+        body{
+            min-width: 320px;   /* 页面最小宽度 320px */
+            background: #1b1e24;
+            font-family: "微软雅黑", sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .title{
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* 八个盒子容器 */
+        .grid{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .grid div{
+            height: 120px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #7d5fff, #12cbc4);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        /* ===== 四种排列变化：2列 → 3列 → 4列 → 8列 ===== */
+        /* 默认（最窄，约850px可触发）：一行 2 个 */
+        .grid div{ width: calc(50% - 5px); }
+
+        /* ===== 媒体查询1：一行 3 个 ===== */
+        @media (min-width: 900px){
+            .grid div{ width: calc(33.333% - 7px); }
+        }
+
+        /* ===== 媒体查询2：一行 4 个 ===== */
+        @media (min-width: 1200px){
+            .grid div{ width: calc(25% - 8px); }
+        }
+
+        /* ===== 媒体查询3：一行 8 个 ===== */
+        @media (min-width: 1500px){
+            .grid div{ width: calc(12.5% - 9px); }
+        }
+    </style>
+</head>
+<body>
+    <h2 class="title">何汶军的媒体查询布局（8个盒子）</h2>
+    <div class="grid">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+        <div>7</div>
+        <div>8</div>
+    </div>
+</body>
+</html>

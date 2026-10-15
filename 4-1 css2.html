@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>114  何汶军</title>
+    <style>
+        h2,h3,p/*群组选择器*/{
+            padding: 0;
+            margin: 0;
+        }
+        #box{
+            padding: 8px;
+            margin: 20px;
+            border: 1px solid #000;
+            font-size: 14px;
+            background-color: #eee;
+
+        }
+        #box h3{ 
+             /*字体大小16px*/
+             font-size: 16px;
+             /*行高33px*/
+             line-height: 33px;
+             /*居中*/
+             text-align: center;
+             /*字体颜色*/
+             color:#333;
+             /*字行间距*/
+             letter-spacing: 3px;
+        
+        
+        }
+        #box p{ 
+           /*颜色*/
+           color: #666;
+           /*首行空两格*/
+           text-indent: 2em;
+           /*行高150%*/
+           line-height: 150%;
+
+        
+        }
+        #box a{
+            /*颜色#034*/
+            color: rgb(228, 11, 11);
+            /*下划线*/
+            text-decoration: underline;
+        }
+        /*=====下面只新增拓展的样式，上面全部原样不动=====*/
+        h2 {
+            background-color: #000;
+            color: #fff;
+        }
+        .blue-bold {
+            color: blue;
+            font-weight: bold;
+        }
+        .know-item {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>css群组选择器和后代选择器</h2>
+    <div id="box">
+        <h3>css进阶</h3>
+        <p>学号：<span class="blue-bold">114</span>,姓名：<span class="blue-bold">何汶军</span>,班级：<span class="blue-bold">计算机24001</span>,《高级网页设计》的学习难度：一般,
+        本实例的知识点：<span class="know-item">css群组选择器和后代选择器</span>。
+        <a href="#">更多</a>
+        </p>
+    </div>
+    <!-- 拓展：学号，姓名，班级的值是蓝色加粗，使用1个css选择器
+     h2黑底白字
+     知识点的值蓝底白字 -->
+</body>
+</html>

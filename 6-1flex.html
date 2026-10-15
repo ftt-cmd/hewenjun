@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>114 何汶军</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            padding: 20px;
+        }
+        h2{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /* 四个示例框横向排列 */
+        .flex{
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .flex li{
+            width: 22%;
+            height: 250px;
+            border: 2px solid #333;
+            list-style: none;
+            display: flex;          /* 每个示例框内部也是 flex 容器 */
+            background: #fff;
+        }
+        /* 子元素方块（灰色填充） */
+        .box{
+            width: 60px;
+            height: 60px;
+            border: 1px solid #333;
+            background: #999;
+        }
+
+        /* 示例1：单个元素水平垂直居中 */
+        .flex li:nth-child(1){
+            justify-content: center;
+            align-items: center;
+        }
+        /* 示例2：两个元素上下排列，且之间有间隔 */
+        .flex li:nth-child(2){
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        /* 示例3：四个元素 2×2 网格 */
+        .flex li:nth-child(3){
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+        }
+        .flex li:nth-child(3) .box{
+            width: 40%;
+            height: 40%;
+        }
+        /* 示例4：上方一个长条 + 下方两个并排 */
+        .flex li:nth-child(4){
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+        }
+        .flex li:nth-child(4) .box:nth-child(1){
+            width: 90%;
+            height: 35%;
+        }
+        .flex li:nth-child(4) .box:nth-child(n+2){
+            width: 40%;
+            height: 35%;
+        }
+    </style>
+</head>
+<body>
+    <h2>何汶军的flex</h2>
+    <ul class="flex">
+        <li>
+            <div class="box"></div>
+        </li>
+        <li>
+            <div class="box"></div>
+            <div class="box"></div>
+        </li>
+        <li>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </li>
+        <li>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </li>
+    </ul>
+</body>
+</html>

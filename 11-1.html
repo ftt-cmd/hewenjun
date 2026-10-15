@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web前端长度单位</title>
+<style>
+  * { box-sizing: border-box; }
+  .yuan_back { display: inline-block; margin-bottom: 16px; padding: 8px 16px; background: #3498db; color: #fff; border-radius: 6px; text-decoration: none; font-size: 14px; }
+  .yuan_back:hover { background: #2980b9; }
+  body {
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+  }
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    padding: 20px 24px;
+    margin: 0 auto 24px;
+    max-width: 900px;
+  }
+  .card h2 {
+    color: #34495e;
+    border-left: 4px solid #3498db;
+    padding-left: 12px;
+    margin-top: 0;
+    font-size: 20px;
+  }
+  .card .desc {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .demo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .bar {
+    background: linear-gradient(90deg, #3498db, #1abc9c);
+    height: 30px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+  code {
+    background: #eef2f7;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  th, td {
+    border: 1px solid #e1e6eb;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  th {
+    background: #ecf0f1;
+  }
+  .px-demo { width: 200px; }
+  .pt-demo { width: 150pt; }
+  .cm-demo { width: 5cm; }
+  .mm-demo { width: 50mm; }
+  .in-demo { width: 2in; }
+  .pc-demo { width: 12pc; }
+  .em-demo { font-size: 16px; }
+  .em-bar { width: 8em; font-size: 1em; }
+  .rem-bar { width: 8rem; }
+  .vh-bar { height: 6vh; width: 220px; }
+  .vw-bar { width: 30vw; }
+  .vmin-bar { width: 30vmin; }
+  .vmax-bar { width: 30vmax; }
+  .pct-wrap { width: 100%; background: #f0f3f7; border-radius: 4px; }
+  .pct-bar { width: 50%; }
+  .fluid { font-size: clamp(14px, 3vw, 22px); color: #2c3e50; }
+</style>
+</head>
+<body>
+<a href="index.html" class="yuan_back">← 返回首页</a>
+
+<h1>Web前端长度单位</h1>
+<p class="subtitle">绝对单位 vs 相对单位 — 直观对比展示</p>
+
+<div class="card">
+  <h2>1. 绝对单位（Absolute Units）</h2>
+  <p class="desc">
+    基于固定物理尺寸，不随屏幕或父元素变化。CSS 中 1in = 96px，因此 1pt = 96/72 px，1pc = 16px。
+    在屏幕上通常会被浏览器按像素换算，并非真正的物理尺寸。
+  </p>
+  <div class="demo">
+    <div class="bar px-demo">200px</div>
+  </div>
+  <div class="demo">
+    <div class="bar pt-demo">150pt</div>
+  </div>
+  <div class="demo">
+    <div class="bar cm-demo">5cm</div>
+  </div>
+  <div class="demo">
+    <div class="bar mm-demo">50mm</div>
+  </div>
+  <div class="demo">
+    <div class="bar in-demo">2in</div>
+  </div>
+  <div class="demo">
+    <div class="bar pc-demo">12pc</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. 相对单位（Relative Units）</h2>
+  <p class="desc">
+    相对于其他值（如父元素字号、根元素字号、视口尺寸）而变化，适用于响应式布局。
+  </p>
+
+  <h3>em — 相对于当前元素的字体大小</h3>
+  <p>父容器字号 <code>16px</code>，<code>8em = 128px</code>：</p>
+  <div class="em-demo">
+    <div class="bar em-bar">8em</div>
+  </div>
+
+  <h3>rem — 相对于根元素（html）字体大小</h3>
+  <p>根字号默认 <code>16px</code>，<code>8rem = 128px</code>：</p>
+  <div class="demo">
+    <div class="bar rem-bar">8rem</div>
+  </div>
+
+  <h3>% — 相对于父元素</h3>
+  <div class="pct-wrap">
+    <div class="bar pct-bar">50%</div>
+  </div>
+
+  <h3>vw / vh — 相对于视口宽度 / 高度</h3>
+  <p>视口宽度的 30% 和视口高度的 6%：</p>
+  <div class="demo">
+    <div class="bar vw-bar">30vw</div>
+  </div>
+  <div class="demo">
+    <div class="bar vh-bar">宽220px × 高6vh</div>
+  </div>
+
+  <h3>vmin / vmax — 相对于视口较小 / 较大的边</h3>
+  <div class="demo">
+    <div class="bar vmin-bar">30vmin</div>
+  </div>
+  <div class="demo">
+    <div class="bar vmax-bar">30vmax</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>3. 函数式单位</h2>
+  <p class="desc"><code>clamp(min, 理想值, max)</code> 让字号在范围内自适应视口，常用于流式排版。</p>
+  <p class="fluid">这段文字使用 clamp(14px, 3vw, 22px)，缩放窗口可看到字号变化。</p>
+</div>
+
+<div class="card">
+  <h2>4. 单位速查表</h2>
+  <table>
+    <thead>
+      <tr><th>单位</th><th>类型</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>px</td><td>绝对</td><td>CSS 像素，最常用</td></tr>
+      <tr><td>pt / pc</td><td>绝对</td><td>点 / 派卡，打印常用（1pc = 12pt）</td></tr>
+      <tr><td>cm / mm / in</td><td>绝对</td><td>厘米 / 毫米 / 英寸（1in = 96px）</td></tr>
+      <tr><td>em</td><td>相对</td><td>相对当前元素字号，会逐级继承</td></tr>
+      <tr><td>rem</td><td>相对</td><td>相对根元素字号，推荐用于全局尺寸</td></tr>
+      <tr><td>%</td><td>相对</td><td>相对父元素对应属性</td></tr>
+      <tr><td>vw / vh</td><td>相对</td><td>视口宽度的 1% / 视口高度的 1%</td></tr>
+      <tr><td>vmin / vmax</td><td>相对</td><td>视口较小 / 较大边的 1%</td></tr>
+      <tr><td>ch / ex</td><td>相对</td><td>字符 "0" 的宽度 / 小写 x 的高度</td></tr>
+      <tr><td>fr</td><td>相对</td><td>CSS Grid 中的弹性份额</td></tr>
+      <tr><td>clamp()</td><td>函数</td><td>在最小值与最大值之间自适应</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

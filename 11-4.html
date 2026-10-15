@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>资讯列表</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    padding: 24px 14px;
+    line-height: 1.5;
+  }
+  .yuan_back {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    background: #6c5ce7;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .yuan_back:hover { background: #5a4bd1; }
+  #yuan_main {
+    max-width: 880px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    padding: 8px 30px;
+  }
+  .yuan_header {
+    padding: 18px 0 14px;
+    border-bottom: 2px solid #e8e8e8;
+  }
+  .yuan_header h1 { font-size: 22px; color: #222; letter-spacing: 1px; }
+  .yuan_item {
+    display: flex;
+    gap: 20px;
+    padding: 22px 0;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .yuan_item:last-child { border-bottom: none; }
+  .yuan_thumb {
+    width: 200px;
+    height: 126px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: #eee;
+  }
+  .yuan_content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .yuan_title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+  }
+  .yuan_flag { width: 24px; height: 16px; flex-shrink: 0; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.1); }
+  .yuan_desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .yuan_meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: auto;
+    font-size: 13px;
+    color: #999;
+  }
+  .yuan_meta_item { display: inline-flex; align-items: center; gap: 5px; transition: color .2s; }
+  .yuan_meta_item:hover { color: #6c5ce7; cursor: pointer; }
+  .yuan_icon { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .yuan_icon_fill { fill: currentColor; stroke: none; }
+  @media (max-width: 640px) {
+    .yuan_item { flex-direction: column; gap: 12px; }
+    .yuan_thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+    .yuan_meta { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="yuan_icon_calendar" viewBox="0 0 24 24">
+    <rect x="4" y="6" width="16" height="14" rx="2"/>
+    <line x1="4" y1="10.5" x2="20" y2="10.5"/>
+    <line x1="8" y1="3.5" x2="8" y2="7"/>
+    <line x1="16" y1="3.5" x2="16" y2="7"/>
+  </symbol>
+  <symbol id="yuan_icon_user" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4.5 20.5c0-4.2 3.4-6.5 7.5-6.5s7.5 2.3 7.5 6.5"/>
+  </symbol>
+  <symbol id="yuan_icon_search" viewBox="0 0 24 24">
+    <circle cx="10.5" cy="10.5" r="6.5"/>
+    <line x1="15.3" y1="15.3" x2="21" y2="21"/>
+  </symbol>
+  <symbol id="yuan_icon_comment" viewBox="0 0 24 24">
+    <path d="M21 12c0 4.4-4 8-9 8-1.2 0-2.4-.2-3.4-.6L3 21l1.7-4.2C3.6 15.4 3 13.8 3 12c0-4.4 4-8 9-8s9 3.6 9 8z"/>
+  </symbol>
+  <symbol id="yuan_flag_cn" viewBox="0 0 30 20">
+    <rect width="30" height="20" fill="#de2910"/>
+    <g fill="#ffde00">
+      <path d="M0,-1 L0.118,-0.363 L0.588,-0.809 L0.309,-0.225 L0.951,-0.309 L0.382,0 L0.951,0.309 L0.309,0.225 L0.588,0.809 L0.118,0.363 Z" transform="translate(5.5,4.5) scale(3.2)"/>
+      <path d="M0,-1 L0.118,-0.363 L0.588,-0.809 L0.309,-0.225 L0.951,-0.309 L0.382,0 L0.951,0.309 L0.309,0.225 L0.588,0.809 L0.118,0.363 Z" transform="translate(10.6,1.7) scale(1.2)"/>
+      <path d="M0,-1 L0.118,-0.363 L0.588,-0.809 L0.309,-0.225 L0.951,-0.309 L0.382,0 L0.951,0.309 L0.309,0.225 L0.588,0.809 L0.118,0.363 Z" transform="translate(12.6,3.4) scale(1.2)"/>
+      <path d="M0,-1 L0.118,-0.363 L0.588,-0.809 L0.309,-0.225 L0.951,-0.309 L0.382,0 L0.951,0.309 L0.309,0.225 L0.588,0.809 L0.118,0.363 Z" transform="translate(12.6,6.1) scale(1.2)"/>
+      <path d="M0,-1 L0.118,-0.363 L0.588,-0.809 L0.309,-0.225 L0.951,-0.309 L0.382,0 L0.951,0.309 L0.309,0.225 L0.588,0.809 L0.118,0.363 Z" transform="translate(10.6,7.8) scale(1.2)"/>
+    </g>
+  </symbol>
+</svg>
+
+<a href="index.html" class="yuan_back">← 返回首页</a>
+
+<div id="yuan_main">
+  <header class="yuan_header">
+    <h1>资讯列表</h1>
+  </header>
+
+  <article class="yuan_item">
+    <img src="img/1.jpg" alt="影之刃零" class="yuan_thumb">
+    <div class="yuan_content">
+      <h2 class="yuan_title">《影之刃零》被击败的敌人不会重生，武器升级可随时重置，地图上的资源有限（4Gamer采访）<svg class="yuan_flag"><use href="#yuan_flag_cn"/></svg></h2>
+      <p class="yuan_desc">这款游戏几乎所有方面都好得让人难以置信，有时候真的不敢相信。</p>
+      <div class="yuan_meta">
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_calendar"/></svg>2026-10-12</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_user"/></svg>兰陵笑笑生</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_search"/></svg>3052</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_comment"/></svg>8</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="yuan_item">
+    <img src="img/2.jpg" alt="中国游戏" class="yuan_thumb">
+    <div class="yuan_content">
+      <h2 class="yuan_title">这款中国游戏让西方3A工作室感到恐慌<svg class="yuan_flag"><use href="#yuan_flag_cn"/></svg></h2>
+      <p class="yuan_desc">网友：原因很简单，就是因为他们能做出好玩的游戏，仅此而已。这些开发者是真正关心自己开发的产品，而不是仅仅为了赚钱才投身于此。</p>
+      <div class="yuan_meta">
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_calendar"/></svg>2026-10-07</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_user"/></svg>IPmod</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_search"/></svg>7579</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_comment"/></svg>20</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="yuan_item">
+    <img src="img/3.jpg" alt="冰淇淋" class="yuan_thumb">
+    <div class="yuan_content">
+      <h2 class="yuan_title">我们在中国小城试吃了最便宜、最贵以及榴莲口味的冰淇淋！<svg class="yuan_flag"><use href="#yuan_flag_cn"/></svg></h2>
+      <p class="yuan_desc">网友：东南亚大概有90%的人都喜欢吃榴莲，小孩子通常从小就会培养起对榴莲的偏好。新鲜榴莲的味道虽然非常浓烈，但香气和口感都很好。而中国市场上卖的大多是冻品，解冻之后风味和香气都会变得有些糟糕……</p>
+      <div class="yuan_meta">
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_calendar"/></svg>2026-09-30</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_user"/></svg>Hana.liu</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_search"/></svg>5816</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_comment"/></svg>12</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="yuan_item">
+    <img src="img/4.jpg" alt="AI演员" class="yuan_thumb">
+    <div class="yuan_content">
+      <h2 class="yuan_title">中国“AI演员”急速成长，对“真人剧”也产生影响。中国电视剧制作最前线<svg class="yuan_flag"><use href="#yuan_flag_cn"/></svg></h2>
+      <p class="yuan_desc">很有意思的一篇</p>
+      <div class="yuan_meta">
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_calendar"/></svg>2026-09-29</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_user"/></svg>user9101</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_search"/></svg>7997</span>
+        <span class="yuan_meta_item"><svg class="yuan_icon"><use href="#yuan_icon_comment"/></svg>44</span>
+      </div>
+    </div>
+  </article>
+</div>
+
+</body>
+</html>

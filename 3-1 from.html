@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表单练习</title>
+</head>
+<body>
+    <h2>表单form</h2>
+    <form action="http://huanqiu.com" name="y1">
+        <p>用户名: <input type="text" name="username" placeholder="请输入用户名"></p>
+        <p>密码: <input type="password" name="password" placeholder="请输入密码"></p>
+
+        <p>出生日期:
+            <input type="date" name="birthdate">
+        </p>
+
+        <p>性别:
+            <input type="radio" name="sex" value="male" checked>男
+            <input type="radio" name="sex" value="female">女
+            <input type="radio" name="sex" value="secret">保密
+        </p>
+
+        <p>爱好:
+            <input type="checkbox" name="hobbies" value="basketball">篮球
+            <input type="checkbox" name="hobbies" value="football">足球
+            <input type="checkbox" name="hobbies" value="badminton">羽毛球
+            <input type="checkbox" name="hobbies" value="table‑tennis">乒乓球
+        </p>
+
+        <p>籍贯:
+            <select name="birthplace">
+                <option value="beijing">北京</option>
+                <option value="shanghai" selected>上海</option>
+                <option value="guangzhou">广州</option>
+                <option value="shenzhen">深圳</option>
+            </select>
+        </p>
+
+        <p>个人介绍:
+            <textarea name="introduction" cols="30" rows="10" placeholder="请输入个人介绍"></textarea>
+        </p>
+
+        <p>上传文件:
+            <input type="file" name="files" multiple>
+        </p>
+
+        <p>
+            <input type="button" value="普通按钮">
+            <input type="submit" value="提交按钮">
+            <input type="reset" value="重置按钮">
+        </p>
+        <!-- 表单外的按钮 -->
+         <input type="button" value="普通按钮"></input>
+         
+    </form>
+    <!-- 页面导航：连接 1-1 到 4-1 各页 -->
+    <div style="margin-top:48px; padding:20px 0; border-top:1px solid rgba(22,22,22,0.2); font-family:'Microsoft YaHei', sans-serif; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <a href="2-2.html" style="text-decoration:none; color:#161616; border:1px solid #161616; background:#d7f36b; padding:8px 18px;">← 上一页</a>
+        <a href="index.html" style="text-decoration:none; color:#161616; border:1px solid #161616; background:#c9ddff; padding:8px 18px;">返回主页</a>
+        <a href="3-2 css.html" style="text-decoration:none; color:#161616; border:1px solid #161616; background:#d7f36b; padding:8px 18px;">下一页 →</a>
+    </div>
+</body>
+</html>

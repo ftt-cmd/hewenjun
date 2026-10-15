@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>何汶军的《高级网页设计》课堂实践</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            background: #f5f3ee;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ===== 顶部 Hero ===== */
+        .hero {
+            background: linear-gradient(135deg, #1f1c2c 0%, #3a3154 50%, #5b4a8a 100%);
+            color: #fff;
+            padding: 90px 40px 70px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 40px;
+            background: #f5f3ee;
+            clip-path: polygon(0 100%, 100% 100%, 100% 0, 50% 100%, 0 0);
+        }
+
+        .hero .tag {
+            display: inline-block;
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: #c9b8ff;
+            border: 1px solid rgba(201, 184, 255, 0.5);
+            padding: 6px 18px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+        }
+
+        .hero .subtitle {
+            font-size: 17px;
+            color: #d8d3ee;
+            margin-bottom: 8px;
+        }
+
+        .hero .sid {
+            font-size: 14px;
+            color: #a99fc9;
+            font-family: Consolas, monospace;
+        }
+
+        /* ===== 容器 ===== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 30px;
+        }
+
+        /* ===== 区块标题 ===== */
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding-left: 14px;
+            border-left: 4px solid #6c5ce7;
+        }
+
+        .section-desc {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 28px;
+            padding-left: 18px;
+        }
+
+        /* ===== 作品卡片网格 ===== */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .work-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 26px 24px;
+            border: 1px solid #ece8df;
+            transition: all 0.3s ease;
+            display: block;
+            position: relative;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(108, 92, 231, 0.15);
+            border-color: #d6cff5;
+        }
+
+        .work-card .num {
+            display: inline-block;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            color: #6c5ce7;
+            background: #efebff;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 14px;
+        }
+
+        .work-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .work-card p {
+            font-size: 13.5px;
+            color: #777;
+            line-height: 1.7;
+        }
+
+        .work-card .file {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #aaa;
+            font-family: Consolas, monospace;
+        }
+
+        /* ===== 图片展示 ===== */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+
+        .gallery a {
+            display: block;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ece8df;
+            background: #fff;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery a:hover img {
+            transform: scale(1.06);
+        }
+
+        /* ===== 提示词区块 ===== */
+        .prompt-box {
+            background: #fff;
+            border: 1px solid #ece8df;
+            border-left: 4px solid #6c5ce7;
+            border-radius: 10px;
+            padding: 26px 30px;
+            margin-bottom: 60px;
+        }
+
+        .prompt-box .label {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #6c5ce7;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .prompt-box .text {
+            font-size: 14.5px;
+            color: #555;
+            line-height: 2;
+        }
+
+        /* ===== 页脚 ===== */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #999;
+            font-size: 13px;
+            border-top: 1px solid #e5e0d5;
+        }
+
+        footer span {
+            color: #6c5ce7;
+            font-weight: 600;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .hero {
+                padding: 60px 20px 50px;
+            }
+            .hero h1 {
+                font-size: 28px;
+            }
+            .container {
+                padding: 30px 18px;
+            }
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            .work-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 顶部主题区 ===== -->
+    <header class="hero">
+        <div class="tag">ADVANCED WEB DESIGN</div>
+        <h1>何汶军的《高级网页设计》课堂实践</h1>
+        <p class="subtitle">从标签到页面 · 一份可点击的学习档案</p>
+        <p class="sid">学号：24001010114</p>
+    </header>
+
+    <div class="container">
+
+        <!-- ===== 作品导航 ===== -->
+        <h2 class="section-title">课堂实践作品</h2>
+        <p class="section-desc">点击卡片进入对应课堂页面</p>
+
+        <div class="work-grid">
+
+            <a href="1.html" class="work-card">
+                <span class="num">01</span>
+                <h3>个人信息页</h3>
+                <p>第一个 HTML 页面，显示姓名与学号，建立网页开发的基本骨架。</p>
+                <div class="file">1.html</div>
+            </a>
+
+            <a href="2.html" class="work-card">
+                <span class="num">02</span>
+                <h3>HTML 元素</h3>
+                <p>练习标题、段落、换行、无序列表、div 盒子与 span 文字，理解开始标签 + 内容 + 结束标签的结构。</p>
+                <div class="file">2.html</div>
+            </a>
+
+            <a href="2-1.html" class="work-card">
+                <span class="num">03</span>
+                <h3>超链接、图片与表格</h3>
+                <p>外部与本地超链接、img 图片（alt、title、自适应宽度）、图片超链接，以及"大国重器"四行三列表格。</p>
+                <div class="file">2-1.html</div>
+            </a>
+
+            <a href="3-1 from.html" class="work-card">
+                <span class="num">04</span>
+                <h3>表单 Form</h3>
+                <p>系统练习文本框、密码框、单选按钮、复选框、下拉选择、文本域、日期与文件上传等表单控件。</p>
+                <div class="file">3-1 from.html</div>
+            </a>
+
+            <a href="4-1 css2.html" class="work-card">
+                <span class="num">05</span>
+                <h3>CSS 选择器进阶</h3>
+                <p>群组选择器与后代选择器，练习文字排版（行高、字间距、首行缩进）与链接样式。</p>
+                <div class="file">4-1 css2.html</div>
+            </a>
+
+            <a href="5-1层叠与继承.html" class="work-card">
+                <span class="num">06</span>
+                <h3>层叠与继承</h3>
+                <p>对比 !important、id、类、标签选择器及外部样式表 css.css 的优先级顺序，理解样式继承规则。</p>
+                <div class="file">5-1层叠与继承.html</div>
+            </a>
+
+            <a href="5-2盒模型.html" class="work-card">
+                <span class="num">07</span>
+                <h3>CSS 盒模型</h3>
+                <p>通过三个并排盒子对比 border、padding、margin 三层空间的占用与写法。</p>
+                <div class="file">5-2盒模型.html</div>
+            </a>
+
+            <a href="6-1flex.html" class="work-card">
+                <span class="num">08</span>
+                <h3>Flex 布局基础</h3>
+                <p>练习水平垂直居中、纵向排列、flex-wrap 实现 2×2 网格、上方长条加下方并排的复合布局。</p>
+                <div class="file">6-1flex.html</div>
+            </a>
+
+            <a href="6-2一左一右.html" class="work-card">
+                <span class="num">09</span>
+                <h3>一左一右</h3>
+                <p>用三种方式实现标题居左、"更多"链接居右：space-between、flex-grow、position: absolute。</p>
+                <div class="file">6-2一左一右.html</div>
+            </a>
+
+            <a href="7-1 上图下文.html" class="work-card">
+                <span class="num">10</span>
+                <h3>上图下文图片列表</h3>
+                <p>Flex 三列等宽图片卡片，文字通过绝对定位叠加在图片底部半透明黑条上。</p>
+                <div class="file">7-1 上图下文.html</div>
+            </a>
+
+            <a href="7-2 左图右文.html" class="work-card">
+                <span class="num">11</span>
+                <h3>左图右文新闻列表</h3>
+                <p>左侧固定宽度缩略图，右侧标题占满整行，作者名与日期通过 flex-grow 一左一右分布。</p>
+                <div class="file">7-2 左图右文.html</div>
+            </a>
+
+            <a href="8-1 css3选择器.html" class="work-card">
+                <span class="num">12</span>
+                <h3>CSS3 选择器</h3>
+                <p>CSS3 新增选择器与伪类的课堂练习。</p>
+                <div class="file">8-1 css3选择器.html</div>
+            </a>
+
+            <a href="9-1 transition.html" class="work-card">
+                <span class="num">13</span>
+                <h3>transition 过渡动画</h3>
+                <p>图片列表 hover 过渡：第 3n+1 张图片放大 1.7 倍，第 3n+2、3n+3 张底部文字层平滑展开，图片自适应宽度。</p>
+                <div class="file">9-1 transition.html</div>
+            </a>
+
+            <a href="11-1.html" class="work-card">
+                <span class="num">14</span>
+                <h3>Web前端长度单位</h3>
+                <p>绝对单位（px、pt、cm、mm、in、pc）与相对单位（em、rem、%、vw、vh、vmin、vmax）直观对比展示，含 clamp() 流式排版与单位速查表。</p>
+                <div class="file">11-1.html</div>
+            </a>
+
+            <a href="11-2.html" class="work-card">
+                <span class="num">15</span>
+                <h3>CSS3 3D动画</h3>
+                <p>3D 立方体旋转、翻转卡片、旋转木马、perspective 交互演示与 3D 文字效果。</p>
+                <div class="file">11-2.html</div>
+            </a>
+
+        </div>
+
+        <!-- ===== 素材图片 ===== -->
+        <h2 class="section-title">实践素材图片</h2>
+        <p class="section-desc">点击可查看大图</p>
+
+        <div class="gallery">
+            <a href="img/1.jpg" target="_blank">
+                <img src="img/1.jpg" alt="素材图片 1">
+            </a>
+            <a href="img/2.jpg" target="_blank">
+                <img src="img/2.jpg" alt="素材图片 2">
+            </a>
+            <a href="img/3.jpg" target="_blank">
+                <img src="img/3.jpg" alt="素材图片 3">
+            </a>
+        </div>
+
+        <!-- ===== 本页提示词 ===== -->
+        <h2 class="section-title">本页生成提示词</h2>
+        <p class="section-desc">页面中包含的原始提示词</p>
+
+        <div class="prompt-box">
+            <span class="label">PROMPT</span>
+            <p class="text">
+                在index.html包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为何汶军的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。
+            </p>
+        </div>
+
+    </div>
+
+    <!-- ===== 页脚 ===== -->
+    <footer>
+        <p>© 2026 <span>何汶军</span> · 《高级网页设计》课堂实践 · 学号 24001010114</p>
+    </footer>
+
+</body>
+</html>

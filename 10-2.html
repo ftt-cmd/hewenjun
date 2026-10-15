@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-2 CSS动画幻灯片</title>
+    <style>
+        /* 全局css */
+        *{margin: 0;padding: 0;}
+        body{
+            background: #1b1e24;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ===== 幻灯片：上图下文 ===== */
+        .slide{
+            width: 480px;
+        }
+
+        /* 图片窗口：固定大小，超出隐藏 */
+        .frame{
+            width: 480px;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.15);
+        }
+
+        /* 图片轨道：3张图横向排开，总宽 = 300% */
+        .track{
+            display: flex;
+            width: 300%;
+
+            /* 扩展：图片切换不是透明度变化，而是位置（位移）动画 */
+            /* 12s 一轮：每张停留 4s，通过平移 track 来切换 */
+            animation: slideMove 12s ease-in-out infinite;
+        }
+        .track img{
+            width: 480px;   /* 每张图和窗口同宽 */
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 关键帧：平移轨道位置来切换图片 */
+        @keyframes slideMove{
+            /* 停在第1张 */
+            0%  { transform: translateX(0); }
+            25% { transform: translateX(0); }
+            /* 切到第2张（向左移动一张图的宽度 480px） */
+            33% { transform: translateX(-480px); }
+            58% { transform: translateX(-480px); }
+            /* 切到第3张（再向左移动一张） */
+            66% { transform: translateX(-960px); }
+            91% { transform: translateX(-960px); }
+            /* 回到第1张，循环 */
+            100%{ transform: translateX(0); }
+        }
+
+        /* 下方文字：上图下文 */
+        .caption{
+            text-align: center;
+            color: #fff;
+            font-family: "微软雅黑", sans-serif;
+            margin-top: 16px;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- 上图：图片位置动画切换 -->
+        <div class="frame">
+            <div class="track">
+                <img src="./img/1.jpg">
+                <img src="./img/2.jpg">
+                <img src="./img/3.jpg">
+            </div>
+        </div>
+        <!-- 下文 -->
+        <p class="caption">何汶军的 CSS 动画幻灯片</p>
+    </div>
+</body>
+</html>
