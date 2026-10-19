@@ -119,5 +119,17 @@
         <span>我的</span>
     </a>
 </nav>
+<script>
+(function() {
+    var yuan_items = document.querySelectorAll('.yuan_nav-item');
+    yuan_items.forEach(function(yuan_item) {
+        yuan_item.addEventListener('click', function(e) {
+            e.preventDefault();
+            yuan_items.forEach(function(yuan_i) { yuan_i.classList.remove('yuan_active'); });
+            this.classList.add('yuan_active');
+        });
+    });
+})();
+</script>
 </body>
 </html>
