@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iconfont 字体图标导航</title>
+<link rel="stylesheet" href="cdn/iconfont.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+.yuan_body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #f5f5f5;
+    padding-bottom: 60px;
+}
+.yuan_nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+.yuan_nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0 6px;
+    text-decoration: none;
+    color: #999;
+    font-size: 11px;
+    position: relative;
+    transition: color 0.3s;
+}
+.yuan_nav-item.yuan_active {
+    color: #ff6b35;
+}
+.yuan_nav-icon {
+    font-size: 24px;
+    margin-bottom: 3px;
+    position: relative;
+    display: inline-block;
+}
+.yuan_badge {
+    position: absolute;
+    top: -6px;
+    right: -14px;
+    background: #ff3b30;
+    color: #fff;
+    font-size: 10px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-style: normal;
+    font-weight: bold;
+}
+.yuan_dot {
+    position: absolute;
+    top: -2px;
+    right: -6px;
+    width: 8px;
+    height: 8px;
+    background: #ff3b30;
+    border-radius: 50%;
+}
+.yuan_content {
+    padding: 20px;
+}
+.yuan_back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+</style>
+</head>
+<body class="yuan_body">
+<div class="yuan_content">
+    <a href="index.html" class="yuan_back">返回首页</a>
+    <h2>iconfont 字体图标导航栏</h2>
+    <p>使用 CSS 字体图标方式渲染</p>
+</div>
+<nav class="yuan_nav">
+    <a href="#" class="yuan_nav-item yuan_active">
+        <span class="yuan_nav-icon iconfont icon-shouye"></span>
+        <span>首页</span>
+    </a>
+    <a href="#" class="yuan_nav-item">
+        <span class="yuan_nav-icon iconfont icon-bisai">
+            <i class="yuan_badge">3</i>
+        </span>
+        <span>比赛</span>
+    </a>
+    <a href="#" class="yuan_nav-item">
+        <span class="yuan_nav-icon iconfont icon-dibudaohanglan-">
+            <i class="yuan_dot"></i>
+        </span>
+        <span>资讯</span>
+    </a>
+    <a href="#" class="yuan_nav-item">
+        <span class="yuan_nav-icon iconfont icon-jifenbang">
+            <i class="yuan_badge">8</i>
+        </span>
+        <span>数据</span>
+    </a>
+    <a href="#" class="yuan_nav-item">
+        <span class="yuan_nav-icon iconfont icon-wode">
+            <i class="yuan_dot"></i>
+        </span>
+        <span>我的</span>
+    </a>
+</nav>
+</body>
+</html>
