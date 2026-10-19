@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucide SVG 图标</title>
+<script src="cdn/lucide.min.js"></script>
+<style>
+.yuan_body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    min-height: 100vh;
+}
+.yuan_container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.yuan_header {
+    text-align: center;
+    color: #fff;
+    padding: 40px 0;
+}
+.yuan_header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.yuan_header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+.yuan_nav {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.yuan_nav a {
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,0.2);
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 0.95em;
+    transition: background 0.3s;
+}
+.yuan_nav a:hover {
+    background: rgba(255,255,255,0.4);
+}
+.yuan_section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.yuan_section-title {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #2c5364;
+}
+.yuan_icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+}
+.yuan_icon-card {
+    text-align: center;
+    padding: 20px 10px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.yuan_icon-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+.yuan_icon-card svg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+.yuan_icon-card span {
+    font-size: 0.85em;
+    color: #666;
+}
+.yuan_stroke-blue { stroke: #0d6efd; }
+.yuan_stroke-green { stroke: #198754; }
+.yuan_stroke-red { stroke: #dc3545; }
+.yuan_stroke-orange { stroke: #fd7e14; }
+.yuan_stroke-purple { stroke: #6f42c1; }
+.yuan_stroke-cyan { stroke: #0dcaf0; }
+.yuan_stroke-pink { stroke: #d63384; }
+.yuan_stroke-teal { stroke: #20c997; }
+.yuan_stroke-indigo { stroke: #6610f2; }
+</style>
+</head>
+<body class="yuan_body">
+<div class="yuan_container">
+    <div class="yuan_header">
+        <h1>Lucide SVG 图标</h1>
+        <p>基于 SVG 的图标库，通过 JavaScript 生成内联 SVG 矢量图标</p>
+    </div>
+    <div class="yuan_nav">
+        <a href="index.html">返回首页</a>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">界面图标 (Interface)</h2>
+        <div class="yuan_icon-grid" id="yuan_interface_grid"></div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">箭头与方向 (Arrows)</h2>
+        <div class="yuan_icon-grid" id="yuan_arrows_grid"></div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">媒体与文件 (Media & Files)</h2>
+        <div class="yuan_icon-grid" id="yuan_media_grid"></div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">设备与通讯 (Devices & Communication)</h2>
+        <div class="yuan_icon-grid" id="yuan_devices_grid"></div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">自然与天气 (Nature & Weather)</h2>
+        <div class="yuan_icon-grid" id="yuan_nature_grid"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var yuan_iconData = [
+        { id: 'yuan_interface_grid', icons: [
+            { name: 'home', cls: 'yuan_stroke-blue' },
+            { name: 'user', cls: 'yuan_stroke-green' },
+            { name: 'settings', cls: 'yuan_stroke-purple' },
+            { name: 'search', cls: 'yuan_stroke-cyan' },
+            { name: 'bell', cls: 'yuan_stroke-orange' },
+            { name: 'star', cls: 'yuan_stroke-yellow' },
+            { name: 'heart', cls: 'yuan_stroke-red' },
+            { name: 'bookmark', cls: 'yuan_stroke-indigo' },
+            { name: 'flag', cls: 'yuan_stroke-teal' },
+            { name: 'tag', cls: 'yuan_stroke-pink' }
+        ]},
+        { id: 'yuan_arrows_grid', icons: [
+            { name: 'arrow-up', cls: 'yuan_stroke-blue' },
+            { name: 'arrow-down', cls: 'yuan_stroke-green' },
+            { name: 'arrow-left', cls: 'yuan_stroke-orange' },
+            { name: 'arrow-right', cls: 'yuan_stroke-purple' },
+            { name: 'chevron-up', cls: 'yuan_stroke-cyan' },
+            { name: 'chevron-down', cls: 'yuan_stroke-red' },
+            { name: 'rotate-cw', cls: 'yuan_stroke-teal' },
+            { name: 'rotate-ccw', cls: 'yuan_stroke-indigo' },
+            { name: 'refresh-cw', cls: 'yuan_stroke-pink' },
+            { name: 'external-link', cls: 'yuan_stroke-blue' }
+        ]},
+        { id: 'yuan_media_grid', icons: [
+            { name: 'image', cls: 'yuan_stroke-green' },
+            { name: 'camera', cls: 'yuan_stroke-purple' },
+            { name: 'music', cls: 'yuan_stroke-pink' },
+            { name: 'video', cls: 'yuan_stroke-red' },
+            { name: 'file-text', cls: 'yuan_stroke-blue' },
+            { name: 'film', cls: 'yuan_stroke-indigo' },
+            { name: 'mic', cls: 'yuan_stroke-orange' },
+            { name: 'headphones', cls: 'yuan_stroke-cyan' },
+            { name: 'paperclip', cls: 'yuan_stroke-teal' },
+            { name: 'download', cls: 'yuan_stroke-green' }
+        ]},
+        { id: 'yuan_devices_grid', icons: [
+            { name: 'smartphone', cls: 'yuan_stroke-blue' },
+            { name: 'monitor', cls: 'yuan_stroke-purple' },
+            { name: 'tablet', cls: 'yuan_stroke-cyan' },
+            { name: 'wifi', cls: 'yuan_stroke-green' },
+            { name: 'battery', cls: 'yuan_stroke-orange' },
+            { name: 'bluetooth', cls: 'yuan_stroke-indigo' },
+            { name: 'mail', cls: 'yuan_stroke-red' },
+            { name: 'message-circle', cls: 'yuan_stroke-teal' },
+            { name: 'phone', cls: 'yuan_stroke-pink' },
+            { name: 'printer', cls: 'yuan_stroke-blue' }
+        ]},
+        { id: 'yuan_nature_grid', icons: [
+            { name: 'sun', cls: 'yuan_stroke-yellow' },
+            { name: 'moon', cls: 'yuan_stroke-indigo' },
+            { name: 'cloud', cls: 'yuan_stroke-cyan' },
+            { name: 'cloud-rain', cls: 'yuan_stroke-blue' },
+            { name: 'snowflake', cls: 'yuan_stroke-cyan' },
+            { name: 'wind', cls: 'yuan_stroke-teal' },
+            { name: 'leaf', cls: 'yuan_stroke-green' },
+            { name: 'flower-2', cls: 'yuan_stroke-pink' },
+            { name: 'mountain', cls: 'yuan_stroke-purple' },
+            { name: 'umbrella', cls: 'yuan_stroke-orange' }
+        ]}
+    ];
+
+    yuan_iconData.forEach(function(yuan_group) {
+        var yuan_grid = document.getElementById(yuan_group.id);
+        if (!yuan_grid) return;
+        yuan_group.icons.forEach(function(yuan_icon) {
+            var yuan_card = document.createElement('div');
+            yuan_card.className = 'yuan_icon-card';
+            var yuan_span = document.createElement('span');
+            yuan_span.textContent = yuan_icon.name;
+            yuan_card.innerHTML = '<i data-lucide="' + yuan_icon.name + '" class="' + yuan_icon.cls + '"></i>';
+            yuan_card.appendChild(yuan_span);
+            yuan_grid.appendChild(yuan_card);
+        });
+    });
+
+    lucide.createIcons({
+        attrs: {
+            'stroke-width': 2,
+            'width': 40,
+            'height': 40
+        }
+    });
+})();
+</script>
+</body>
+</html>

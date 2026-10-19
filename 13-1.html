@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Font Awesome 字体图标</title>
+<link rel="stylesheet" href="cdn/fa-all.min.css">
+<style>
+.yuan_body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+.yuan_container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.yuan_header {
+    text-align: center;
+    color: #fff;
+    padding: 40px 0;
+}
+.yuan_header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.yuan_header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+.yuan_nav {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.yuan_nav a {
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,0.2);
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 0.95em;
+    transition: background 0.3s;
+}
+.yuan_nav a:hover {
+    background: rgba(255,255,255,0.4);
+}
+.yuan_section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+.yuan_section-title {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #667eea;
+}
+.yuan_icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+}
+.yuan_icon-card {
+    text-align: center;
+    padding: 20px 10px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.yuan_icon-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+.yuan_icon-card i {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    display: block;
+}
+.yuan_icon-card span {
+    font-size: 0.85em;
+    color: #666;
+}
+.yuan_text-blue { color: #0d6efd; }
+.yuan_text-green { color: #198754; }
+.yuan_text-red { color: #dc3545; }
+.yuan_text-orange { color: #fd7e14; }
+.yuan_text-purple { color: #6f42c1; }
+.yuan_text-cyan { color: #0dcaf0; }
+.yuan_text-pink { color: #d63384; }
+.yuan_text-yellow { color: #ffc107; }
+.yuan_text-teal { color: #20c997; }
+.yuan_text-indigo { color: #6610f2; }
+</style>
+</head>
+<body class="yuan_body">
+<div class="yuan_container">
+    <div class="yuan_header">
+        <h1>Font Awesome 字体图标</h1>
+        <p>基于 Web Font 的矢量图标库，通过 CSS 类名引用字体文件渲染图标</p>
+    </div>
+    <div class="yuan_nav">
+        <a href="index.html">返回首页</a>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">Solid 实心图标 (fa-solid)</h2>
+        <div class="yuan_icon-grid">
+            <div class="yuan_icon-card"><i class="fa-solid fa-house yuan_text-blue"></i><span>fa-house</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-user yuan_text-green"></i><span>fa-user</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-heart yuan_text-red"></i><span>fa-heart</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star yuan_text-yellow"></i><span>fa-star</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-magnifying-glass yuan_text-cyan"></i><span>fa-magnifying-glass</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-gear yuan_text-purple"></i><span>fa-gear</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-envelope yuan_text-orange"></i><span>fa-envelope</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-bell yuan_text-pink"></i><span>fa-bell</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-camera yuan_text-indigo"></i><span>fa-camera</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-music yuan_text-teal"></i><span>fa-music</span></div>
+        </div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">Regular 常规图标 (fa-regular)</h2>
+        <div class="yuan_icon-grid">
+            <div class="yuan_icon-card"><i class="fa-regular fa-user yuan_text-blue"></i><span>fa-user</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-heart yuan_text-red"></i><span>fa-heart</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-star yuan_text-yellow"></i><span>fa-star</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-bell yuan_text-orange"></i><span>fa-bell</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-envelope yuan_text-cyan"></i><span>fa-envelope</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-folder yuan_text-purple"></i><span>fa-folder</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-image yuan_text-green"></i><span>fa-image</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-comment yuan_text-pink"></i><span>fa-comment</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-calendar yuan_text-indigo"></i><span>fa-calendar</span></div>
+            <div class="yuan_icon-card"><i class="fa-regular fa-thumbs-up yuan_text-teal"></i><span>fa-thumbs-up</span></div>
+        </div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">Brands 品牌图标 (fa-brands)</h2>
+        <div class="yuan_icon-grid">
+            <div class="yuan_icon-card"><i class="fa-brands fa-github yuan_text-blue"></i><span>fa-github</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-weixin yuan_text-green"></i><span>fa-weixin</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-weibo yuan_text-red"></i><span>fa-weibo</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-qq yuan_text-cyan"></i><span>fa-qq</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-twitter yuan_text-blue"></i><span>fa-twitter</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-facebook yuan_text-indigo"></i><span>fa-facebook</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-youtube yuan_text-red"></i><span>fa-youtube</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-apple yuan_text-purple"></i><span>fa-apple</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-android yuan_text-green"></i><span>fa-android</span></div>
+            <div class="yuan_icon-card"><i class="fa-brands fa-chrome yuan_text-orange"></i><span>fa-chrome</span></div>
+        </div>
+    </div>
+
+    <div class="yuan_section">
+        <h2 class="yuan_section-title">尺寸与动画</h2>
+        <div class="yuan_icon-grid">
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-xs yuan_text-yellow"></i><span>fa-xs</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-sm yuan_text-yellow"></i><span>fa-sm</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-lg yuan_text-yellow"></i><span>fa-lg</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-2x yuan_text-yellow"></i><span>fa-2x</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-3x yuan_text-yellow"></i><span>fa-3x</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-star fa-5x yuan_text-yellow"></i><span>fa-5x</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-cog fa-spin yuan_text-purple"></i><span>fa-spin</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-sync fa-spin yuan_text-cyan"></i><span>fa-sync</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-spinner fa-pulse yuan_text-orange"></i><span>fa-pulse</span></div>
+            <div class="yuan_icon-card"><i class="fa-solid fa-heart fa-beat yuan_text-red"></i><span>fa-beat</span></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
