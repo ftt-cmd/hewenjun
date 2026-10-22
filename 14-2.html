@@ -1,0 +1,216 @@
+<!-- 姓名：袁磊，日期：JavaScript六种基础数据类型演示 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript六种基础数据类型演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .hwj_container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+        .hwj_header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hwj_header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .hwj_header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .hwj_type-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .hwj_type-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .hwj_type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+        .hwj_type-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .hwj_type-value {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: "Consolas", monospace;
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+        }
+        .hwj_type-typeof {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #888;
+        }
+        .hwj_type-typeof span {
+            color: #e91e63;
+            font-weight: bold;
+        }
+        .hwj_console {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-family: "Consolas", monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .hwj_console-line {
+            border-bottom: 1px solid #444;
+            padding: 4px 0;
+        }
+        .hwj_console-label {
+            color: #50fa7b;
+        }
+        .hwj_console-value {
+            color: #8be9fd;
+        }
+        .hwj_console-type {
+            color: #ff79c6;
+        }
+        .hwj_footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .hwj_back-link {
+            display: inline-block;
+            padding: 10px 30px;
+            background: #667eea;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .hwj_back-link:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="hwj_container">
+        <div class="hwj_header">
+            <h1>JavaScript 六种基础数据类型演示</h1>
+            <p>String、Number、Boolean、Null、Undefined、Symbol</p>
+        </div>
+
+        <div class="hwj_type-list" id="hwj_typeList"></div>
+
+        <h2 style="color:#333; margin-bottom:15px;">控制台输出</h2>
+        <div class="hwj_console" id="hwj_console"></div>
+
+        <div class="hwj_footer">
+            <a href="index.html" class="hwj_back-link">返回首页</a>
+        </div>
+    </div>
+
+    <script>
+        // 1. String（字符串）类型
+        let hwj_str = "Hello, JavaScript!";
+
+        // 2. Number（数字）类型
+        let hwj_num = 2026;
+
+        // 3. Boolean（布尔值）类型
+        let hwj_bool = true;
+
+        // 4. Null（空值）类型
+        let hwj_null = null;
+
+        // 5. Undefined（未定义）类型
+        let hwj_undef = undefined;
+
+        // 6. Symbol（符号）类型（ES6 新增）
+        let hwj_symbol = Symbol("hwj_symbol");
+
+        // 数据集合
+        const hwj_dataTypes = [
+            { name: "String（字符串）", value: hwj_str, display: '"' + hwj_str + '"' },
+            { name: "Number（数字）", value: hwj_num, display: String(hwj_num) },
+            { name: "Boolean（布尔值）", value: hwj_bool, display: String(hwj_bool) },
+            { name: "Null（空值）", value: hwj_null, display: "null" },
+            { name: "Undefined（未定义）", value: hwj_undef, display: "undefined" },
+            { name: "Symbol（符号）", value: hwj_symbol, display: hwj_symbol.toString() }
+        ];
+
+        // 获取DOM元素
+        const hwj_typeList = document.getElementById("hwj_typeList");
+        const hwj_console = document.getElementById("hwj_console");
+
+        // 渲染卡片
+        hwj_dataTypes.forEach(function(hwj_item) {
+            let hwj_card = document.createElement("div");
+            hwj_card.className = "hwj_type-card";
+
+            let hwj_typeName = document.createElement("div");
+            hwj_typeName.className = "hwj_type-name";
+            hwj_typeName.textContent = hwj_item.name;
+
+            let hwj_typeValue = document.createElement("div");
+            hwj_typeValue.className = "hwj_type-value";
+            hwj_typeValue.textContent = "值: " + hwj_item.display;
+
+            let hwj_typeTypeof = document.createElement("div");
+            hwj_typeTypeof.className = "hwj_type-typeof";
+            hwj_typeTypeof.innerHTML = 'typeof 结果: <span>' + typeof hwj_item.value + '</span>';
+
+            hwj_card.appendChild(hwj_typeName);
+            hwj_card.appendChild(hwj_typeValue);
+            hwj_card.appendChild(hwj_typeTypeof);
+            hwj_typeList.appendChild(hwj_card);
+
+            // 控制台输出
+            let hwj_line = document.createElement("div");
+            hwj_line.className = "hwj_console-line";
+            hwj_line.innerHTML = '<span class="hwj_console-label">' + hwj_item.name +
+                '</span> => 值: <span class="hwj_console-value">' + hwj_item.display +
+                '</span> | typeof: <span class="hwj_console-type">' + typeof hwj_item.value + '</span>';
+            hwj_console.appendChild(hwj_line);
+
+            // 同时输出到浏览器控制台
+            console.log(hwj_item.name, "=> 值:", hwj_item.value, "| typeof:", typeof hwj_item.value);
+        });
+
+        // 演示特殊类型检测
+        console.log("--- 特殊检测 ---");
+        console.log("typeof null =>", typeof null, "（注意：null的typeof返回object，这是历史遗留bug）");
+        console.log("typeof undefined =>", typeof undefined);
+        console.log("typeof Symbol() =>", typeof Symbol());
+    </script>
+</body>
+</html>
