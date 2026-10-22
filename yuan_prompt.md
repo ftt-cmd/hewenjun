@@ -44,3 +44,30 @@
 ## 2026-10-15-16-10
 **模型**: longcat-2.5-preview-free
 **提示词**: 创建12-1.html，展示css变量，然后提交项目，页面包括何汶军
+
+---
+时间: 2026-10-19-03-56
+模型: opencode/longcat-2.5-preview-free (claude-sonnet-5)
+提示词内容: 编写两个网页13-1.html和13-2.html分别显示font awesome图标和lucide图标，前者采用字体图标的形式，后者使用svg的形式。下载相关cdn文件到当前目录的cdn目录
+
+
+---
+时间: 2026-10-19-04-05
+模型: opencode/longcat-2.5-preview-free
+提示词内容: 根据font目录下的iconfont的图标，分别完成13-3.html和13-4.html，使用字体图标和svg的方法完成移动端的自适应宽度的固定的下导航，下导航有5项内容首页，比赛，资讯，数据 我的，导航项包括数字徽章和右上角的红点，全屏宽度
+
+
+---
+时间: 2026-10-22-15-25
+模型: doubao-seedream (MainAgent)
+提示词: 在网页这个文件夹里面生成一个符合指导书的网页，命名为四级项目一，需要原图的自己去网上寻找，然后告诉来源。指导书要求：从上图下文、左图右文、一左一右、列表、导航、tab中选至少3个典型部分，至少2处含图片/图表，使用flex/grid，不用float，不要求交互动画。
+
+---
+时间: 2026-10-22-15-57
+模型: doubao-seedream (MainAgent)
+提示词: d:\高级网页设计\网页\.opencode\skills\commit-push.md 根据给定文件创建trae的skill
+
+---
+时间: 2026-10-22-15-59
+模型: doubao-seedream (MainAgent)
+提示词: 提交项目
