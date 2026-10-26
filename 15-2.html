@@ -1,0 +1,292 @@
+<!--
+  姓名：袁磊
+  日期：2026-10-26
+  功能名称：JavaScript 条件与循环演示 — if/else、switch、for、while、do-while
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15-2 JavaScript 条件与循环</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f0f4f8;
+    padding: 24px 20px;
+    min-height: 100vh;
+  }
+
+  .hwj_back {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 6px 14px;
+    background: #4a90d9;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .hwj_back:hover { background: #2c5f8a; }
+
+  .hwj_title {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #333;
+    font-size: 26px;
+  }
+
+  .hwj_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .hwj_card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .hwj_card h2 {
+    font-size: 17px;
+    color: #2c5f8a;
+    border-left: 4px solid #4a90d9;
+    padding-left: 10px;
+    margin-bottom: 12px;
+  }
+
+  .hwj_card p.hwj_desc {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .hwj_output {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    max-height: 260px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .hwj_output .hwj_info   { color: #569cd6; }
+  .hwj_output .hwj_ok     { color: #6a9955; }
+  .hwj_output .hwj_warn   { color: #dcdcaa; }
+  .hwj_output .hwj_err    { color: #f48771; }
+
+  .hwj_runbtn {
+    margin-top: 10px;
+    padding: 7px 16px;
+    background: #4a90d9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .hwj_runbtn:hover { background: #2c5f8a; }
+
+  @media (max-width: 720px) {
+    .hwj_grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<h1 class="hwj_title">JavaScript 条件与循环</h1>
+
+<div class="hwj_grid">
+
+  <!-- ① if / else if / else -->
+  <div class="hwj_card">
+    <h2>① if / else if / else</h2>
+    <p class="hwj_desc">根据考试成绩（0~100）划分等级。点击按钮随机生成成绩并判定。</p>
+    <div class="hwj_output" id="hwj_out_if"></div>
+    <button class="hwj_runbtn" onclick="hwj_runIf()">▶ 运行</button>
+  </div>
+
+  <!-- ② switch -->
+  <div class="hwj_card">
+    <h2>② switch</h2>
+    <p class="hwj_desc">根据数字 1~7 输出对应的星期几。</p>
+    <div class="hwj_output" id="hwj_out_switch"></div>
+    <button class="hwj_runbtn" onclick="hwj_runSwitch()">▶ 运行</button>
+  </div>
+
+  <!-- ③ for 循环：九九乘法表 -->
+  <div class="hwj_card">
+    <h2>③ for 循环 — 九九乘法表</h2>
+    <p class="hwj_desc">两层 for 循环输出完整九九乘法表。</p>
+    <div class="hwj_output" id="hwj_out_for"></div>
+    <button class="hwj_runbtn" onclick="hwj_runFor()">▶ 运行</button>
+  </div>
+
+  <!-- ④ while 循环：猜数字 -->
+  <div class="hwj_card">
+    <h2>④ while 循环 — 猜数字</h2>
+    <p class="hwj_desc">生成 1~100 随机数，模拟多次猜测直到猜中为止。</p>
+    <div class="hwj_output" id="hwj_out_while"></div>
+    <button class="hwj_runbtn" onclick="hwj_runWhile()">▶ 运行</button>
+  </div>
+
+  <!-- ⑤ do-while 循环：累加求和 -->
+  <div class="hwj_card">
+    <h2>⑤ do-while 循环 — 累加求和</h2>
+    <p class="hwj_desc">计算 1 + 2 + 3 + … + N，直到和超过 200 时停止。</p>
+    <div class="hwj_output" id="hwj_out_dowhile"></div>
+    <button class="hwj_runbtn" onclick="hwj_runDoWhile()">▶ 运行</button>
+  </div>
+
+  <!-- ⑥ break / continue -->
+  <div class="hwj_card">
+    <h2>⑥ break / continue — 素数过滤</h2>
+    <p class="hwj_desc">1~30 中，跳过偶数（continue），遇到超过 25 时停止（break），输出剩余素数。</p>
+    <div class="hwj_output" id="hwj_out_break"></div>
+    <button class="hwj_runbtn" onclick="hwj_runBreak()">▶ 运行</button>
+  </div>
+
+</div>
+
+<script>
+  function hwj_clear(id) { document.getElementById(id).innerHTML = ''; }
+
+  function hwj_append(id, text, cls) {
+    var el = document.getElementById(id);
+    var span = document.createElement('span');
+    span.className = cls || '';
+    span.textContent = text;
+    el.appendChild(span);
+  }
+
+  // ① if / else if / else
+  function hwj_runIf() {
+    hwj_clear('hwj_out_if');
+    var score = Math.floor(Math.random() * 101);
+    hwj_append('hwj_out_if', '生成成绩: ' + score + ' 分\n', 'hwj_info');
+
+    var grade;
+    if (score >= 90) {
+      grade = 'A (优秀)';
+    } else if (score >= 80) {
+      grade = 'B (良好)';
+    } else if (score >= 70) {
+      grade = 'C (中等)';
+    } else if (score >= 60) {
+      grade = 'D (及格)';
+    } else {
+      grade = 'F (不及格)';
+    }
+    hwj_append('hwj_out_if', '等级: ' + grade + '\n', 'hwj_ok');
+  }
+
+  // ② switch
+  function hwj_runSwitch() {
+    hwj_clear('hwj_out_switch');
+    var days = ['周日','周一','周二','周三','周四','周五','周六'];
+    for (var i = 1; i <= 7; i++) {
+      var msg;
+      switch (i) {
+        case 1: msg = '1 — 周一'; break;
+        case 2: msg = '2 — 周二'; break;
+        case 3: msg = '3 — 周三'; break;
+        case 4: msg = '4 — 周四'; break;
+        case 5: msg = '5 — 周五'; break;
+        case 6: msg = '6 — 周六'; break;
+        case 7: msg = '7 — 周日'; break;
+        default: msg = '无效数字';
+      }
+      hwj_append('hwj_out_switch', msg + '\n', 'hwj_info');
+    }
+  }
+
+  // ③ for 循环 — 九九乘法表
+  function hwj_runFor() {
+    hwj_clear('hwj_out_for');
+    for (var i = 1; i <= 9; i++) {
+      var line = '';
+      for (var j = 1; j <= i; j++) {
+        line += j + '×' + i + '=' + (i * j) + '  ';
+      }
+      hwj_append('hwj_out_for', line.trim() + '\n', 'hwj_ok');
+    }
+  }
+
+  // ④ while 循环 — 猜数字
+  function hwj_runWhile() {
+    hwj_clear('hwj_out_while');
+    var target = Math.floor(Math.random() * 100) + 1;
+    hwj_append('hwj_out_while', '目标: ' + target + ' (隐藏，下面模拟猜测)\n', 'hwj_info');
+
+    var guess = Math.floor(Math.random() * 100) + 1;
+    var count = 0;
+    while (guess !== target && count < 20) {
+      count++;
+      if (guess > target) {
+        hwj_append('hwj_out_while', '第' + count + '次猜 ' + guess + ' → 大了\n', 'hwj_warn');
+        guess = Math.floor(Math.random() * guess) + 1;
+      } else {
+        hwj_append('hwj_out_while', '第' + count + '次猜 ' + guess + ' → 小了\n', 'hwj_warn');
+        guess = guess + Math.floor(Math.random() * (100 - guess)) + 1;
+      }
+      guess = Math.max(1, Math.min(100, guess));
+    }
+    count++;
+    hwj_append('hwj_out_while', '第' + count + '次猜 ' + target + ' → 🎯 猜中！总共 ' + count + ' 次\n', 'hwj_ok');
+  }
+
+  // ⑤ do-while — 累加求和
+  function hwj_runDoWhile() {
+    hwj_clear('hwj_out_dowhile');
+    var sum = 0;
+    var n = 0;
+    do {
+      n++;
+      sum += n;
+      hwj_append('hwj_out_dowhile', '+' + n + ' → sum=' + sum + '\n', 'hwj_info');
+    } while (sum <= 200);
+    hwj_append('hwj_out_dowhile', '停止时: n=' + n + ', sum=' + sum + ' (已超过200)\n', 'hwj_ok');
+  }
+
+  // ⑥ break / continue — 素数过滤
+  function hwj_runBreak() {
+    hwj_clear('hwj_out_break');
+    hwj_append('hwj_out_break', '素数 (跳过偶数, 超过25停止):\n', 'hwj_info');
+    for (var i = 2; i <= 30; i++) {
+      if (i > 25) {
+        hwj_append('hwj_out_break', 'i=' + i + ' → break 退出循环\n', 'hwj_err');
+        break;
+      }
+      if (i % 2 === 0) {
+        hwj_append('hwj_out_break', 'i=' + i + ' → continue (偶数跳过)\n', 'hwj_warn');
+        continue;
+      }
+      var isPrime = true;
+      for (var k = 3; k * k <= i; k += 2) {
+        if (i % k === 0) { isPrime = false; break; }
+      }
+      if (isPrime) {
+        hwj_append('hwj_out_break', '★ i=' + i + ' 是素数\n', 'hwj_ok');
+      } else {
+        hwj_append('hwj_out_break', '  i=' + i + ' 非素数\n', '');
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
