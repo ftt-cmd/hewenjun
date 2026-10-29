@@ -1,0 +1,266 @@
+<!--
+  姓名：袁磊
+  日期：2026-10-29
+  功能名称：资讯列表页面复刻（16-3）— 国旗图标 + 标题 + 日期/作者/浏览量/评论数
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16-3 资讯列表页面复刻</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #fff;
+    padding: 16px 0 40px;
+    min-height: 100vh;
+  }
+
+  .hwj_back {
+    display: inline-block;
+    margin: 0 0 14px 24px;
+    padding: 6px 14px;
+    background: #4a90d9;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .hwj_back:hover { background: #2c5f8a; }
+
+  .hwj_list {
+    list-style: none;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hwj_item {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 24px 14px;
+    border-bottom: 1px solid #e8e8e8;
+    transition: background 0.15s;
+  }
+  .hwj_item:hover { background: #fafbfc; }
+
+  /* 左列：国旗 + 可选的"币"徽章 */
+  .hwj_flag-col {
+    flex: 0 0 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 12px;
+  }
+  .hwj_flag {
+    width: 26px;
+    height: 18px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    display: block;
+  }
+  .hwj_bi {
+    margin-top: 8px;
+    width: 19px;
+    height: 19px;
+    background: #e0343a;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 19px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  /* 右列：标题 + 元信息 */
+  .hwj_body { flex: 1; min-width: 0; }
+
+  .hwj_title {
+    font-size: 16px;
+    color: #222;
+    line-height: 1.65;
+    cursor: pointer;
+  }
+  .hwj_title:hover { color: #4a7cb5; }
+
+  .hwj_meta {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #999;
+  }
+  .hwj_meta .hwj_mi {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 34px;
+  }
+  .hwj_meta svg {
+    width: 13px;
+    height: 13px;
+    margin-right: 5px;
+    flex: 0 0 auto;
+  }
+  .hwj_author {
+    color: #5a7ca6;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 34px;
+  }
+  .hwj_author:hover { text-decoration: underline; }
+  .hwj_author svg { margin-right: 5px; }
+
+  @media (max-width: 600px) {
+    .hwj_item { padding: 14px 14px 12px; }
+    .hwj_meta .hwj_mi { margin-right: 18px; }
+    .hwj_author { margin-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<ul class="hwj_list">
+
+  <!-- 1 美国 · 币 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#b22234"/><g fill="#fff"><rect y="2.8" width="26" height="1.4"/><rect y="5.6" width="26" height="1.4"/><rect y="8.4" width="26" height="1.4"/><rect y="11.2" width="26" height="1.4"/><rect y="14" width="26" height="1.4"/></g><rect width="11" height="8.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="2.2" cy="2" r="0.6"/><circle cx="5.5" cy="2" r="0.6"/><circle cx="8.8" cy="2" r="0.6"/><circle cx="3.8" cy="4.2" r="0.6"/><circle cx="7.1" cy="4.2" r="0.6"/><circle cx="2.2" cy="6.4" r="0.6"/><circle cx="5.5" cy="6.4" r="0.6"/><circle cx="8.8" cy="6.4" r="0.6"/></g></svg>
+      <span class="hwj_bi">币</span>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">美国母亲患癌，医生一句"她要是中国人就有救了"让儿子为母飞上海买药，中国创新药成救命稻草。事迹曝光后引美网民热议反思</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>兰陵笑笑生</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>3149</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>23</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 2 印度 · 币 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="6" fill="#ff9933"/><rect y="6" width="26" height="6" fill="#fff"/><rect y="12" width="26" height="6" fill="#138808"/><circle cx="13" cy="9" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/></svg>
+      <span class="hwj_bi">币</span>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">2026年全球五大经济体按购买力平价排名：中国第一、美国第二、印度第三。PPP到底能不能用来比较各国经济总量</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>艾所未闻</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>1393</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>8</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 3 美国 · 币 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#b22234"/><g fill="#fff"><rect y="2.8" width="26" height="1.4"/><rect y="5.6" width="26" height="1.4"/><rect y="8.4" width="26" height="1.4"/><rect y="11.2" width="26" height="1.4"/><rect y="14" width="26" height="1.4"/></g><rect width="11" height="8.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="2.2" cy="2" r="0.6"/><circle cx="5.5" cy="2" r="0.6"/><circle cx="8.8" cy="2" r="0.6"/><circle cx="3.8" cy="4.2" r="0.6"/><circle cx="7.1" cy="4.2" r="0.6"/><circle cx="2.2" cy="6.4" r="0.6"/><circle cx="5.5" cy="6.4" r="0.6"/><circle cx="8.8" cy="6.4" r="0.6"/></g></svg>
+      <span class="hwj_bi">币</span>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">好评刷屏、美国IGN高分9分！苦熬多年的国产功夫肉鸽武侠新作正式出圈，人性化BOSS战改动、经典武侠吊威亚动作广受好评</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>嘟嘟嘟冒泡...</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>1725</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>0</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 4 美国 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#b22234"/><g fill="#fff"><rect y="2.8" width="26" height="1.4"/><rect y="5.6" width="26" height="1.4"/><rect y="8.4" width="26" height="1.4"/><rect y="11.2" width="26" height="1.4"/><rect y="14" width="26" height="1.4"/></g><rect width="11" height="8.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="2.2" cy="2" r="0.6"/><circle cx="5.5" cy="2" r="0.6"/><circle cx="8.8" cy="2" r="0.6"/><circle cx="3.8" cy="4.2" r="0.6"/><circle cx="7.1" cy="4.2" r="0.6"/><circle cx="2.2" cy="6.4" r="0.6"/><circle cx="5.5" cy="6.4" r="0.6"/><circle cx="8.8" cy="6.4" r="0.6"/></g></svg>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">老外讨论：中国现在正批量生产核反应堆</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>回复奖励</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>1165</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>6</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 5 巴西 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#009b3a"/><path d="M13 2 L24 9 L13 16 L2 9 Z" fill="#fedf00"/><circle cx="13" cy="9" r="3.4" fill="#002776"/></svg>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">巴西左翼州联邦众议员称"在越南和中国很少看到警察"从警察不配枪到死刑、刑事责任年龄，网友围绕严打、黑帮清剿与民主代价进行争论</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>不爱睡觉的猪</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>1333</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>8</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 6 联合国 · 币 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#5b92e5"/><circle cx="13" cy="9" r="4.5" fill="none" stroke="#fff" stroke-width="0.9"/><line x1="8.5" y1="9" x2="17.5" y2="9" stroke="#fff" stroke-width="0.7"/><ellipse cx="13" cy="9" rx="2" ry="4.5" fill="none" stroke="#fff" stroke-width="0.7"/></svg>
+      <span class="hwj_bi">币</span>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">X上外网民汇总战况引土网民崩溃，帖子下土网民悲呼：怎么除了日本人和台湾(地区)人，所有人都不支持我们啊...</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>种花家一只兔</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>8734</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>65</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 7 土耳其 · 币 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#e30a17"/><circle cx="10.5" cy="9" r="4.2" fill="#fff"/><circle cx="11.9" cy="9" r="3.4" fill="#e30a17"/><polygon fill="#fff" points="16.6,6.9 17.3,8.8 19.3,8.8 17.7,10 18.3,12 16.6,10.7 14.9,12 15.5,10 13.9,8.8 15.9,8.8"/></svg>
+      <span class="hwj_bi">币</span>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">土耳其人颠倒叙事搞认知作战，说是中国人先用派大星图片侮辱他们才引发大战，国人出征：自己管不住嘴被骂惨了真够双标真够贱</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>熊猫永不为奴</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>4905</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>4</span>
+      </div>
+    </div>
+  </li>
+
+  <!-- 8 美国 -->
+  <li class="hwj_item">
+    <div class="hwj_flag-col">
+      <svg class="hwj_flag" viewBox="0 0 26 18"><rect width="26" height="18" fill="#b22234"/><g fill="#fff"><rect y="2.8" width="26" height="1.4"/><rect y="5.6" width="26" height="1.4"/><rect y="8.4" width="26" height="1.4"/><rect y="11.2" width="26" height="1.4"/><rect y="14" width="26" height="1.4"/></g><rect width="11" height="8.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="2.2" cy="2" r="0.6"/><circle cx="5.5" cy="2" r="0.6"/><circle cx="8.8" cy="2" r="0.6"/><circle cx="3.8" cy="4.2" r="0.6"/><circle cx="7.1" cy="4.2" r="0.6"/><circle cx="2.2" cy="6.4" r="0.6"/><circle cx="5.5" cy="6.4" r="0.6"/><circle cx="8.8" cy="6.4" r="0.6"/></g></svg>
+    </div>
+    <div class="hwj_body">
+      <p class="hwj_title">我们过早地去工业化，把就业和产能拱手让给了中国；移民不受限制，掏空了自己；还向以色列无休止地输送资金、打无休止的战争，最终毁了自己</p>
+      <div class="hwj_meta">
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#999" stroke-width="1"/><path d="M6 3.2V6l2 1.2" fill="none" stroke="#999" stroke-width="1"/></svg>2026-10-29</span>
+        <a class="hwj_author" href="javascript:;"><svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.4" fill="none" stroke="#5a7ca6" stroke-width="1"/><path d="M1.8 10.5c0.7-2.2 2.3-3.3 4.2-3.3s3.5 1.1 4.2 3.3" fill="none" stroke="#5a7ca6" stroke-width="1"/></svg>壳壳子</a>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><circle cx="5" cy="5" r="3.2" fill="none" stroke="#999" stroke-width="1"/><line x1="7.4" y1="7.4" x2="10.6" y2="10.6" stroke="#999" stroke-width="1"/></svg>2806</span>
+        <span class="hwj_mi"><svg viewBox="0 0 12 12"><path d="M1.5 2h9v6h-5l-2.5 2v-2h-1.5z" fill="none" stroke="#999" stroke-width="1"/></svg>15</span>
+      </div>
+    </div>
+  </li>
+
+</ul>
+
+</body>
+</html>
