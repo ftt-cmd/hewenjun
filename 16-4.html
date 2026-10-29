@@ -1,0 +1,323 @@
+<!--
+  姓名：袁磊
+  日期：2026-10-29
+  功能名称：Tab 选项卡联动页面 — 文学社科书城（主编推荐 + 三 Tab 联动图书区/订阅排行榜）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16-4 Tab选项卡 — 文学社科</title>
+<style>
+  /* ===== CSS Reset ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  ul, ol { list-style: none; }
+  img { border: 0; vertical-align: top; }
+  a { text-decoration: none; color: inherit; }
+
+  body {
+    font: 12px/1.5 "宋体", SimSun, Arial, sans-serif;
+    color: #333;
+    background: #fff;
+    padding: 16px 0 60px;
+  }
+
+  .hwj_back {
+    display: inline-block;
+    margin: 0 0 12px 24px;
+    padding: 5px 12px;
+    background: #789f14;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+  .hwj_back:hover { background: #5d7d0f; }
+
+  /* ===== 版心 ===== */
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+
+  /* 顶部大标题 + 绿色底边线 */
+  .hwj_head {
+    border-bottom: 2px solid #789f14;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .hwj_head h1 { font-size: 22px; font-family: "Microsoft YaHei", sans-serif; color: #333; }
+
+  .hwj_main { display: flex; }
+
+  /* ===== 模块A：左侧 主编推荐（固定，不随 Tab 切换） ===== */
+  .hwj_left { width: 210px; flex: 0 0 210px; }
+  .hwj_left h2 { font-size: 14px; padding: 4px 0 12px; }
+
+  .hwj_rec-cover { position: relative; width: 140px; }
+  .hwj_rec-cover img { width: 140px; height: 196px; display: block; }
+  .hwj_badge {
+    position: absolute; left: 0; top: 0;
+    background: #789f14; color: #fff;
+    padding: 2px 7px; font-size: 12px;
+  }
+
+  .hwj_rec h3 { font-size: 12px; margin: 10px 0 6px; color: #333; }
+  .hwj_rec-desc { color: #666; line-height: 1.9; }
+
+  .hwj_hr { border-top: 1px dotted #ddd; margin: 12px 0 10px; }
+
+  .hwj_rec-list li {
+    color: #666; line-height: 26px;
+    position: relative; padding-left: 13px;
+    cursor: pointer;
+  }
+  .hwj_rec-list li::before {
+    content: "";
+    position: absolute; left: 2px; top: 11px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: #bbb;
+  }
+  .hwj_rec-list li:hover { color: #789f14; }
+
+  /* ===== 模块B：右侧 Tab 导航 ===== */
+  .hwj_right { flex: 1; margin-left: 20px; min-width: 0; }
+
+  .hwj_tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+  }
+  .hwj_tabs li {
+    font-size: 14px;
+    line-height: 34px;
+    padding: 0 28px;
+    cursor: pointer;
+    border-top: 3px solid transparent;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: -1px;
+    color: #333;
+    user-select: none;
+  }
+  .hwj_tabs li:hover { color: #789f14; }
+  .hwj_tabs li.hwj_on {
+    font-weight: bold; color: #000;
+    border-top-color: #789f14;   /* 激活项顶部加粗绿线 */
+    border-bottom-color: #fff;   /* 盖住导航灰线 */
+  }
+
+  /* ===== 模块C：Tab 联动内容区 ===== */
+  .hwj_panel { display: flex; padding-top: 14px; }
+
+  /* 中间 8 格图书（4列×2行） */
+  .hwj_books {
+    flex: 1; min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .hwj_books li {
+    text-align: center;
+    padding: 10px 4px 12px;
+    cursor: pointer;
+  }
+  .hwj_books li:nth-child(-n+4) { border-bottom: 1px dotted #ddd; } /* 两行间虚线 */
+  .hwj_books img {
+    width: 100px; height: 140px;
+    display: block; margin: 0 auto 8px;
+  }
+  .hwj_books li:hover .hwj_bname { color: #789f14; }
+  .hwj_bname { color: #333; line-height: 1.4; }
+  .hwj_bprice { color: #c00; font-weight: bold; margin-top: 5px; font-family: Arial, sans-serif; }
+
+  /* 右侧订阅排行榜 */
+  .hwj_rank {
+    width: 212px; flex: 0 0 212px;
+    border-left: 1px dotted #ddd;
+    padding-left: 18px; margin-left: 4px;
+  }
+  .hwj_rank h3 { font-size: 14px; padding: 4px 0 10px; }
+  .hwj_rank li {
+    line-height: 27px; color: #333;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .hwj_rank li:hover { color: #789f14; }
+  .hwj_rank em {
+    font-style: normal;
+    display: inline-block;
+    width: 16px; height: 16px; line-height: 16px;
+    text-align: center; margin-right: 8px;
+    font-size: 11px; vertical-align: middle;
+    font-family: Arial, sans-serif;
+  }
+  .hwj_top  { background: #c00; color: #fff; }               /* 前三名：红底白字 */
+  .hwj_norm {                                                   /* 4~10名：灰框 */
+    width: 14px; height: 14px; line-height: 14px;
+    border: 1px solid #ccc; color: #999; background: #f7f7f7;
+  }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+
+  <!-- 顶部大标题 -->
+  <div class="hwj_head"><h1>文学社科</h1></div>
+
+  <div class="hwj_main">
+
+    <!-- ===== 模块A：主编推荐（静态） ===== -->
+    <aside class="hwj_left">
+      <h2>主编推荐</h2>
+      <div class="hwj_rec">
+        <div class="hwj_rec-cover">
+          <img src="./img/rui.jpg" alt="芮成钢：《虚实之间》" width="140" height="196">
+          <span class="hwj_badge">★力荐</span>
+        </div>
+        <h3>芮成钢：《虚实之间》</h3>
+        <p class="hwj_rec-desc">有十年记者生涯对东西方文化的洞悉，又有与奥巴马等政要零距离接触...</p>
+      </div>
+      <div class="hwj_hr"></div>
+      <ul class="hwj_rec-list">
+        <li>兄弟我在义乌的发财史</li>
+        <li>读佛即是拜佛：唐僧传</li>
+        <li>二战苏联陆军单兵装备</li>
+      </ul>
+    </aside>
+
+    <!-- ===== 模块B+C：Tab 导航 + 联动内容 ===== -->
+    <section class="hwj_right">
+      <ul class="hwj_tabs" id="hwj_tabs">
+        <li class="hwj_on">流行小说</li>
+        <li>社科历史</li>
+        <li>文学艺术</li>
+      </ul>
+      <div id="hwj_panels"></div><!-- 三个联动面板由 JS 按数据生成 -->
+    </section>
+
+  </div>
+</div>
+
+<script>
+  /* ============ 数据源（严格按需求还原） ============ */
+  var hwj_DATA = [
+    {
+      rankTitle: '流行小说订阅榜',
+      books: [
+        { img: './img/a1.jpg', name: '省长的女婿',     price: '¥ 5.98' },
+        { img: './img/a2.jpg', name: '辛夷坞：致青春', price: '¥ 5.00' },
+        { img: './img/a3.jpg', name: '越位',           price: '¥ 2.99' },
+        { img: './img/a4.jpg', name: '扫黑',           price: '¥ 6.40' },
+        { img: './img/a5.jpg', name: '我的帝王生涯',   price: '¥ 4.00' },
+        { img: './img/a6.jpg', name: '南水北调书记',   price: '¥ 5.98' },
+        { img: './img/a7.jpg', name: '1／14第一季',    price: '¥ 4.00' },
+        { img: './img/a8.jpg', name: '辛夷坞：原来',   price: '¥ 4.50' }
+      ],
+      rank: [
+        '山西煤老板（全文）', '你不可不知的人性（全二', '到爱的距离',
+        '梅雨的季节（全文）', '大清相国（全文）', '借势（全文）',
+        '省委班子2（全文）', '静水流深（全文）', '生死疲劳（全文）', '金瓶梅（全文）'
+      ]
+    },
+    {
+      rankTitle: '社科历史订阅榜',
+      books: [
+        { img: './img/b1.jpg', name: '奋斗的仕途',       price: '¥ 3.00' },
+        { img: './img/b2.jpg', name: '历史选择了邓小平', price: '¥ 6.00' },
+        { img: './img/b3.jpg', name: '钱穆看中国文化',   price: '¥ 8.00' },
+        { img: './img/b4.jpg', name: '刺杀林肯',         price: '¥ 3.00' },
+        { img: './img/b5.jpg', name: '资本论',           price: '¥ 3.00' },
+        { img: './img/b6.jpg', name: '为什么是朱元璋',   price: '¥ 4.00' },
+        { img: './img/b7.jpg', name: '阎崇年：大故宫',   price: '¥ 5.00' },
+        { img: './img/b8.jpg', name: '皇后隐历史',       price: '¥ 4.00' }
+      ],
+      rank: [
+        '博弈与社会（全文）', '激荡三十年:中国企业', '我承认我不曾历经沧桑',
+        '吴敬琏传（全文）', '世界因你不同:李开复自传', '我们台湾这些年（全文）',
+        '课本上不说的历史', '重口味心理学（揭开日常行', '微表情心理学（最流行、最', '法网冠军李娜自传：独自上'
+      ]
+    },
+    {
+      rankTitle: '文学艺术订阅榜',
+      books: [
+        { img: './img/c1.jpg', name: '武昌城',         price: '¥ 4.50' },
+        { img: './img/c2.jpg', name: '贾平凹作品选',   price: '¥ 3.00' },
+        { img: './img/c3.jpg', name: '最后一个匈奴',   price: '¥ 4.00' },
+        { img: './img/c4.jpg', name: '岁月与性情',     price: '¥ 8.00' },
+        { img: './img/c5.jpg', name: '浮生六记',       price: '¥ 3.00' },
+        { img: './img/c6.jpg', name: '周国平：宝贝',   price: '¥ 8.00' },
+        { img: './img/c7.jpg', name: '岳飞传',         price: '¥ 3.00' },
+        { img: './img/c8.jpg', name: '撒哈拉的眼泪',   price: '¥ 5.96' }
+      ],
+      rank: [
+        '2012诺贝尔文学奖得主莫言', '变：2012年诺贝尔文学奖得', '逃离：2013诺贝尔文学奖得',
+        '青春（韩寒2011最新作品）', '教你幽默到心田', '宝贝，宝贝',
+        '白魔窟——白粉仔的十二年', '中国式关系（全文）', '于丹：重温最美古诗词（17', '妞妞：一个父亲的札记'
+      ]
+    }
+  ];
+
+  /* ============ 生成三个联动面板 ============ */
+  function hwj_buildPanels() {
+    var wrap = document.getElementById('hwj_panels');
+    var html = '';
+
+    hwj_DATA.forEach(function (group, gi) {
+      /* 中间 8 本图书 */
+      var booksHtml = group.books.map(function (b) {
+        return '<li>' +
+                 '<img src="' + b.img + '" alt="' + b.name + '" width="100" height="140">' +
+                 '<p class="hwj_bname">' + b.name + '</p>' +
+                 '<p class="hwj_bprice">' + b.price + '</p>' +
+               '</li>';
+      }).join('');
+
+      /* 右侧 10 条订阅榜（前三名红标，4~10 灰标） */
+      var rankHtml = group.rank.map(function (text, ri) {
+        var cls = ri < 3 ? 'hwj_top' : 'hwj_norm';
+        return '<li><em class="' + cls + '">' + (ri + 1) + '</em>' + text + '</li>';
+      }).join('');
+
+      html += '<div class="hwj_panel" data-idx="' + gi + '" style="display:' + (gi === 0 ? 'flex' : 'none') + '">' +
+                '<ul class="hwj_books">' + booksHtml + '</ul>' +
+                '<aside class="hwj_rank"><h3>' + group.rankTitle + '</h3><ol>' + rankHtml + '</ol></aside>' +
+              '</div>';
+    });
+
+    wrap.innerHTML = html;
+  }
+
+  /* ============ Tab 切换（鼠标移入 / 点击均触发） ============ */
+  function hwj_switchTab(n) {
+    var tabs   = document.querySelectorAll('#hwj_tabs li');
+    var panels = document.querySelectorAll('.hwj_panel');
+
+    tabs.forEach(function (tab, i) {
+      tab.classList.toggle('hwj_on', i === n);
+    });
+    panels.forEach(function (panel, i) {
+      panel.style.display = (i === n) ? 'flex' : 'none';
+    });
+  }
+
+  function hwj_bindTabs() {
+    var tabs = document.querySelectorAll('#hwj_tabs li');
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('mouseenter', function () { hwj_switchTab(i); });
+      tab.addEventListener('click',      function () { hwj_switchTab(i); });
+    });
+  }
+
+  /* ============ 初始化（带容错） ============ */
+  (function hwj_init() {
+    try {
+      hwj_buildPanels();
+      hwj_bindTabs();
+    } catch (e) {
+      /* 构建失败时保证页面主体（左侧栏目）仍可浏览 */
+      if (window.console) console.error('Tab init error:', e);
+    }
+  })();
+</script>
+
+</body>
+</html>
