@@ -1,0 +1,588 @@
+<!--
+  姓名：袁磊
+  日期：2026-10-29
+  功能名称：JavaScript 主要数组方法形象演示 — push/pop/shift/unshift/splice/slice/concat/join/indexOf/find/forEach/map/filter/reduce/sort/reverse
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16-1 JavaScript 数组方法</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4ecf7 100%);
+    padding: 22px 18px;
+    min-height: 100vh;
+  }
+
+  .hwj_back {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 14px;
+    background: #4a90d9;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .hwj_back:hover { background: #2c5f8a; }
+
+  .hwj_title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+  }
+
+  /* ===== 原始数组可视化条 ===== */
+  .hwj_source-bar {
+    max-width: 1000px;
+    margin: 0 auto 22px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    text-align: center;
+  }
+  .hwj_source-bar h3 {
+    color: #2c5f8a;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .hwj_source-array {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .hwj_source-array .hwj_cell {
+    background: #e8f0fb;
+    border: 2px solid #4a90d9;
+    color: #2c5f8a;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    min-width: 42px;
+    text-align: center;
+    position: relative;
+  }
+  .hwj_source-array .hwj_cell::after {
+    content: attr(data-idx);
+    position: absolute;
+    bottom: -16px;
+    left: 0; right: 0;
+    font-size: 10px;
+    color: #999;
+    font-weight: normal;
+    border: none;
+  }
+
+  /* ===== 分类区块 ===== */
+  .hwj_section {
+    max-width: 1000px;
+    margin: 22px auto 0;
+  }
+  .hwj_section-title {
+    font-size: 18px;
+    color: #fff;
+    background: #4a90d9;
+    padding: 10px 18px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hwj_section-title .hwj_tag {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  .hwj_grid {
+    background: #fff;
+    border-radius: 0 0 8px 8px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+
+  /* ===== 方法卡片 ===== */
+  .hwj_method {
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: #fafbfd;
+    transition: box-shadow 0.2s;
+  }
+  .hwj_method:hover { box-shadow: 0 2px 8px rgba(74,144,217,0.15); }
+
+  .hwj_method-name {
+    display: inline-block;
+    background: #4a90d9;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .hwj_method-name.hwj_mutate   { background: #d9534f; } /* 会修改原数组 */
+  .hwj_method-name.hwj_pure     { background: #5cb85c; } /* 不修改原数组 */
+
+  .hwj_method-desc {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .hwj_code {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+  }
+
+  .hwj_runbtn {
+    background: #4a90d9;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .hwj_runbtn:hover { background: #2c5f8a; }
+
+  /* ===== 可视化输出 ===== */
+  .hwj_out {
+    margin-top: 10px;
+    border-top: 1px dashed #d0d7de;
+    padding-top: 8px;
+    font-size: 12px;
+  }
+  .hwj_out-row { margin-bottom: 5px; line-height: 1.6; word-break: break-all; }
+  .hwj_out-label { color: #888; margin-right: 6px; }
+
+  .hwj_arr-vis {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .hwj_arr-vis .hwj_cell {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    border: 1px solid transparent;
+  }
+  .hwj_cell.hwj_keep { background: #e8f0fb; color: #2c5f8a; border-color: #4a90d9; }
+  .hwj_cell.hwj_new  { background: #d4edda; color: #155724; border-color: #5cb85c; }
+  .hwj_cell.hwj_del  { background: #f8d7da; color: #721c24; border-color: #d9534f; text-decoration: line-through; opacity: 0.55; }
+  .hwj_cell.hwj_move { background: #fff3cd; color: #856404; border-color: #f0ad4e; }
+  .hwj_cell.hwj_match{ background: #ffe0b2; color: #e65100; border-color: #ff9800; font-weight: bold; }
+  .hwj_cell.hwj_result{ background: #e8daef; color: #6c3483; border-color: #8e44ad; font-weight: bold; }
+
+  .hwj_ret {
+    background: #2c3e50;
+    color: #f1c40f;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .hwj_grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<h1 class="hwj_title">JavaScript 主要数组方法（形象演示）</h1>
+
+<!-- ===== 原始数组 ===== -->
+<div class="hwj_source-bar">
+  <h3>🔹 原始数组（所有方法都基于这个数组演示）</h3>
+  <div class="hwj_source-array" id="hwj_source"></div>
+</div>
+
+<!-- ===== 第 1 组：增删方法 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">① 添加 / 删除 <span class="hwj_tag">push · pop · shift · unshift · splice</span></div>
+  <div class="hwj_grid" id="hwj_g1"></div>
+</div>
+
+<!-- ===== 第 2 组：截取 / 合并 / 拼接 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">② 截取 / 合并 / 拼接 <span class="hwj_tag">slice · concat · join</span></div>
+  <div class="hwj_grid" id="hwj_g2"></div>
+</div>
+
+<!-- ===== 第 3 组：查找方法 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">③ 查找 / 判断 <span class="hwj_tag">indexOf · find · findIndex · includes</span></div>
+  <div class="hwj_grid" id="hwj_g3"></div>
+</div>
+
+<!-- ===== 第 4 组：遍历方法 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">④ 遍历 / 转换 / 聚合 <span class="hwj_tag">forEach · map · filter · reduce</span></div>
+  <div class="hwj_grid" id="hwj_g4"></div>
+</div>
+
+<!-- ===== 第 5 组：排序 / 反转 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">⑤ 排序 / 反转 <span class="hwj_tag">sort · reverse</span></div>
+  <div class="hwj_grid" id="hwj_g5"></div>
+</div>
+
+<script>
+  // ============ 原始数组 ============
+  const hwj_ORIGIN = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍑', '🥝'];
+
+  function hwj_showSource() {
+    const el = document.getElementById('hwj_source');
+    el.innerHTML = '';
+    hwj_ORIGIN.forEach((v, i) => {
+      const d = document.createElement('div');
+      d.className = 'hwj_cell';
+      d.textContent = v;
+      d.setAttribute('data-idx', i);
+      el.appendChild(d);
+    });
+  }
+  hwj_showSource();
+
+  // ============ 工具 ============
+  function hwj_cell(val, cls) {
+    return `<span class="hwj_cell ${cls || 'hwj_keep'}">${val}</span>`;
+  }
+  function hwj_arrVis(arr, clsFn) {
+    return `<div class="hwj_arr-vis">` +
+      arr.map((v, i) => hwj_cell(v, clsFn ? clsFn(v, i) : 'hwj_keep')).join('') +
+      `</div>`;
+  }
+  function hwj_method(name, desc, codeStr, isMutate, runFn) {
+    const card = document.createElement('div');
+    card.className = 'hwj_method';
+    card.innerHTML = `
+      <span class="hwj_method-name ${isMutate ? 'hwj_mutate' : 'hwj_pure'}">${name}</span>
+      ${isMutate ? '<span style="font-size:11px;color:#d9534f;margin-left:6px;">⚠ 会修改原数组</span>' : '<span style="font-size:11px;color:#5cb85c;margin-left:6px;">✓ 不修改原数组</span>'}
+      <div class="hwj_method-desc">${desc}</div>
+      <div class="hwj_code">${codeStr}</div>
+      <button class="hwj_runbtn">▶ 运行</button>
+      <div class="hwj_out"></div>
+    `;
+    card.querySelector('button').addEventListener('click', function () {
+      const out = card.querySelector('.hwj_out');
+      out.innerHTML = runFn();
+    });
+    return card;
+  }
+
+  // ============ ① 添加 / 删除 ============
+  const g1 = document.getElementById('hwj_g1');
+
+  g1.appendChild(hwj_method(
+    'push(...items)',
+    '尾部追加元素，返回新长度。',
+    `const a = [...origin];\nconst r = a.push('🍍', '🥭');\n// r = 新长度, a 被修改`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      const r = a.push('🍍', '🥭');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">push('🍍','🥭') → 返回值:</span><span class="hwj_ret">${r}</span></div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">新:</span>${hwj_arrVis(a, (v, i) => i >= before.length ? 'hwj_new' : 'hwj_keep')}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'pop()',
+    '弹出尾部元素，返回被弹出的值。',
+    `const a = [...origin];\nconst r = a.pop();\n// r = 弹出的元素`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      const r = a.pop();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">pop() → 返回值:</span><span class="hwj_ret">${r}</span></div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">新:</span>${hwj_arrVis(a)} <span class="hwj_cell hwj_del">${r}</span> (被删除)</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'shift()',
+    '弹出头部元素，返回被弹出的值。',
+    `const a = [...origin];\nconst r = a.shift();`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      const r = a.shift();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">shift() → 返回值:</span><span class="hwj_ret">${r}</span></div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">新:</span>${hwj_arrVis(a, (v, i) => 'hwj_move')} <span class="hwj_cell hwj_del">${r}</span> (被删除)</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'unshift(...items)',
+    '头部插入元素，返回新长度。',
+    `const a = [...origin];\nconst r = a.unshift('🫐', '🍒');`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      const r = a.unshift('🫐', '🍒');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">unshift('🫐','🍒') → 返回:</span><span class="hwj_ret">${r}</span></div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">新:</span>${hwj_arrVis(a, (v, i) => i < 2 ? 'hwj_new' : 'hwj_move')}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'splice(start, deleteCount, ...items)',
+    '**万能方法**：从 start 删除若干个，再插入新元素。',
+    `const a = [...origin];\n// 从索引 2 开始，删 2 个，插入 '🥝'\nconst r = a.splice(2, 2, '🥝');`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      const r = a.splice(2, 2, '🥝');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">splice(2, 2, '🥝') → 被删:</span><span class="hwj_ret">[${r.join(', ')}]</span></div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">新:</span>${hwj_arrVis(a, (v, i) => i === 2 ? 'hwj_new' : (i < 2 ? 'hwj_keep' : 'hwj_move'))}</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ② 截取 / 合并 / 拼接 ============
+  const g2 = document.getElementById('hwj_g2');
+
+  g2.appendChild(hwj_method(
+    'slice(begin, end)',
+    '截取 [begin, end) 区间，返回新数组（不修改原数组）。',
+    `const r = origin.slice(1, 4);\n// 索引 1,2,3`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.slice(1, 4);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN, (v, i) => (i >= 1 && i < 4) ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">slice(1, 4) → 返回:</span>${hwj_arrVis(r, () => 'hwj_result')}</div>`;
+      return html;
+    }
+  ));
+
+  g2.appendChild(hwj_method(
+    'concat(...arrays)',
+    '合并数组，返回新数组（不修改原数组）。',
+    `const extra = ['🫐','🍒'];\nconst r = origin.concat(extra);`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.concat(['🫐', '🍒']);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">concat(['🫐','🍒']) →</span>${hwj_arrVis(r, (v, i) => i >= hwj_ORIGIN.length ? 'hwj_new' : 'hwj_keep')}</div>`;
+      return html;
+    }
+  ));
+
+  g2.appendChild(hwj_method(
+    'join(separator)',
+    '用分隔符把数组拼成字符串。',
+    `const r = origin.join(' → ');`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.join(' → ');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">join(' → ') →</span></div>`;
+      html += `<div class="hwj_ret" style="white-space:normal;">"${r}"</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ③ 查找 ============
+  const g3 = document.getElementById('hwj_g3');
+
+  g3.appendChild(hwj_method(
+    'indexOf(searchElement)',
+    '返回元素第一次出现的索引；找不到返回 -1。',
+    `const r1 = origin.indexOf('🍊'); // 3\nconst r2 = origin.indexOf('🥥'); // -1`,
+    false,
+    function () {
+      const r1 = hwj_ORIGIN.indexOf('🍊');
+      const r2 = hwj_ORIGIN.indexOf('🥥');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN, (v) => v === '🍊' ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row">indexOf('🍊') = <span class="hwj_ret">${r1}</span></div>`;
+      html += `<div class="hwj_out-row">indexOf('🥥') = <span class="hwj_ret">${r2}</span> (不存在)</div>`;
+      return html;
+    }
+  ));
+
+  g3.appendChild(hwj_method(
+    'find(callback)',
+    '返回第一个满足条件的**元素值**；都不满足返回 undefined。',
+    `// 找带 '🍊' 或之后的\nconst r = origin.find(v => v === '🍊');`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.find(v => v === '🍊');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN, (v) => v === '🍊' ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row">find(v => v === '🍊') →</div>`;
+      html += `<div class="hwj_ret">"${r}"</div>`;
+      return html;
+    }
+  ));
+
+  g3.appendChild(hwj_method(
+    'findIndex(callback)',
+    '返回第一个满足条件的**索引**；都不满足返回 -1。',
+    `// 找索引 >= 4 的第一个\nconst r = origin.findIndex((v,i) => i >= 4);`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.findIndex((v, i) => i >= 4);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN, (v, i) => i >= 4 ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row">findIndex((v,i) => i >= 4) → <span class="hwj_ret">${r}</span></div>`;
+      return html;
+    }
+  ));
+
+  g3.appendChild(hwj_method(
+    'includes(searchElement)',
+    '数组是否包含某元素，返回 true / false。',
+    `origin.includes('🍓'); // true\norigin.includes('🥥'); // false`,
+    false,
+    function () {
+      const r1 = hwj_ORIGIN.includes('🍓');
+      const r2 = hwj_ORIGIN.includes('🥥');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN, (v) => v === '🍓' ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row">includes('🍓') → <span class="hwj_ret">${r1}</span></div>`;
+      html += `<div class="hwj_out-row">includes('🥥') → <span class="hwj_ret">${r2}</span></div>`;
+      return html;
+    }
+  ));
+
+  // ============ ④ 遍历 / 转换 / 聚合 ============
+  const g4 = document.getElementById('hwj_g4');
+
+  g4.appendChild(hwj_method(
+    'forEach(callback)',
+    '遍历数组，每个元素执行一次回调。**没有返回值**。',
+    `origin.forEach((v, i) => {\n  console.log(i, v);\n});`,
+    false,
+    function () {
+      let logs = [];
+      hwj_ORIGIN.forEach((v, i) => logs.push(`${i}:${v}`));
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">遍历过程:</span></div>`;
+      html += `<div style="font-family:Consolas,monospace;font-size:12px;color:#555;line-height:1.8;">${logs.join('  ')}</div>`;
+      html += `<div class="hwj_out-row" style="margin-top:6px;">forEach 返回值: <span class="hwj_ret">undefined</span> (只用来副作用)</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'map(callback)',
+    '**映射**：每个元素都经过回调处理，返回**同长度新数组**。',
+    `// 每个水果加 ✨\nconst r = origin.map(v => v + '✨');`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.map(v => v + '✨');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">map(v => v + '✨') →</span></div>`;
+      html += `<div class="hwj_arr-vis">${r.map(v => hwj_cell(v, 'hwj_result')).join('')}</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'filter(callback)',
+    '**过滤**：留下满足条件的元素，返回新数组（长度 ≤ 原数组）。',
+    `// 只留下索引是偶数的\nconst r = origin.filter((v,i) => i % 2 === 0);`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.filter((v, i) => i % 2 === 0);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原(偶数索引高亮):</span>${hwj_arrVis(hwj_ORIGIN, (v, i) => i % 2 === 0 ? 'hwj_match' : 'hwj_keep')}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">filter((v,i)=>i%2===0) →</span></div>`;
+      html += `<div class="hwj_arr-vis">${r.map(v => hwj_cell(v, 'hwj_result')).join('')}</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'reduce(callback, initial)',
+    '**聚合**：把数组"折叠"成一个值（求和、拼接、统计…）。',
+    `// 拼接成一个字符串\nconst r = origin.reduce(\n  (acc, v) => acc + v, ''\n);`,
+    false,
+    function () {
+      const r = hwj_ORIGIN.reduce((acc, v) => acc + v, '');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">reduce((a,v)=>a+v, '') →</span></div>`;
+      html += `<div class="hwj_ret" style="white-space:normal;">"${r}"</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ⑤ 排序 / 反转 ============
+  const g5 = document.getElementById('hwj_g5');
+
+  g5.appendChild(hwj_method(
+    'sort(compareFn)',
+    '原地排序，默认按 **UTF-16 字典序**。传比较函数可自定义。',
+    `const nums = [3,1,4,1,5,9,2,6];\nnums.sort((a,b) => a - b);\n// 升序`,
+    true,
+    function () {
+      const nums = [3, 1, 4, 1, 5, 9, 2, 6];
+      const before = [...nums];
+      nums.sort((a, b) => a - b);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">sort((a,b)=>a-b) →</span>${hwj_arrVis(nums, (v, i) => {
+        // 标记移动过的
+        return v !== before[i] ? 'hwj_move' : 'hwj_keep';
+      })}</div>`;
+      return html;
+    }
+  ));
+
+  g5.appendChild(hwj_method(
+    'reverse()',
+    '原地反转数组顺序。',
+    `const a = [...origin];\na.reverse();`,
+    true,
+    function () {
+      const a = [...hwj_ORIGIN];
+      const before = [...a];
+      a.reverse();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_arrVis(before)}</div>`;
+      html += `<div class="hwj_out-row"><span class="hwj_out-label">reverse() →</span>${hwj_arrVis(a, (v, i) => v !== before[i] ? 'hwj_move' : 'hwj_keep')}</div>`;
+      return html;
+    }
+  ));
+</script>
+
+</body>
+</html>
