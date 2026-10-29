@@ -156,3 +156,8 @@
 时间: 2026-10-29-08-00
 模型: doubao-seedream (MainAgent)
 提示词: 编写16-1.html，形象的展示javascript主要的数组方法
+
+---
+时间: 2026-10-29-08-10
+模型: doubao-seedream (MainAgent)
+提示词: 编写 16-2.html，展示字符串方法

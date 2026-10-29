@@ -1,0 +1,617 @@
+<!--
+  姓名：袁磊
+  日期：2026-10-29
+  功能名称：JavaScript 字符串方法形象演示 — indexOf/includes/charAt/slice/substring/substr/toUpperCase/toLowerCase/trim/replace/split/concat/repeat/startsWith/endsWith
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16-2 JavaScript 字符串方法</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4ecf7 100%);
+    padding: 22px 18px;
+    min-height: 100vh;
+  }
+
+  .hwj_back {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 14px;
+    background: #4a90d9;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .hwj_back:hover { background: #2c5f8a; }
+
+  .hwj_title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+  }
+
+  /* ===== 原始字符串展示 ===== */
+  .hwj_source-bar {
+    max-width: 1000px;
+    margin: 0 auto 22px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+  .hwj_source-bar h3 {
+    color: #2c5f8a;
+    font-size: 15px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .hwj_source-str {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: Consolas, monospace;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+  }
+  .hwj_source-str .hwj_idx-row {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 8px;
+    font-size: 10px;
+    color: #666;
+    letter-spacing: normal;
+  }
+  .hwj_source-str .hwj_idx-row span {
+    width: 20px;
+    text-align: center;
+  }
+  .hwj_source-str .hwj_chars {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+  .hwj_source-str .hwj_chars span {
+    width: 20px;
+    text-align: center;
+    display: inline-block;
+    position: relative;
+  }
+  .hwj_source-str .hwj_chars span.space::after {
+    content: "␣";
+    color: #555;
+  }
+  .hwj_source-str .hwj_chars span.space_real {
+    border-bottom: 1px dashed #555;
+  }
+
+  /* ===== 分组标题 ===== */
+  .hwj_section {
+    max-width: 1000px;
+    margin: 22px auto 0;
+  }
+  .hwj_section-title {
+    font-size: 18px;
+    color: #fff;
+    background: #4a90d9;
+    padding: 10px 18px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hwj_section-title .hwj_tag {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  .hwj_grid {
+    background: #fff;
+    border-radius: 0 0 8px 8px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+
+  /* ===== 方法卡片 ===== */
+  .hwj_method {
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: #fafbfd;
+    transition: box-shadow 0.2s;
+  }
+  .hwj_method:hover { box-shadow: 0 2px 8px rgba(74,144,217,0.15); }
+
+  .hwj_method-name {
+    display: inline-block;
+    background: #5cb85c;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .hwj_method-desc {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .hwj_code {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+  }
+  .hwj_runbtn {
+    background: #4a90d9;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .hwj_runbtn:hover { background: #2c5f8a; }
+
+  .hwj_out {
+    margin-top: 10px;
+    border-top: 1px dashed #d0d7de;
+    padding-top: 8px;
+    font-size: 12px;
+  }
+  .hwj_out-row { margin-bottom: 6px; line-height: 1.7; word-break: break-all; }
+  .hwj_out-label { color: #888; margin-right: 6px; }
+
+  .hwj_str-vis {
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .hwj_str-vis .hwj_hit { background: #ffe0b2; color: #e65100; border-radius: 2px; padding: 0 2px; }
+  .hwj_str-vis .hwj_slice { background: #d4edda; color: #155724; border-radius: 2px; }
+  .hwj_str-vis .hwj_new  { background: #e8daef; color: #6c3483; border-radius: 2px; }
+
+  .hwj_ret {
+    background: #2c3e50;
+    color: #f1c40f;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .hwj_ret.hwj_bool-true  { background: #27ae60; color: #fff; }
+  .hwj_ret.hwj_bool-false { background: #c0392b; color: #fff; }
+
+  @media (max-width: 600px) {
+    .hwj_grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<h1 class="hwj_title">JavaScript 字符串方法（形象演示）</h1>
+
+<!-- ===== 原始字符串 ===== -->
+<div class="hwj_source-bar">
+  <h3>🔹 原始字符串（所有方法都基于这一个字符串演示）</h3>
+  <div class="hwj_source-str">
+    <div class="hwj_chars" id="hwj_chars"></div>
+    <div class="hwj_idx-row" id="hwj_idx"></div>
+  </div>
+</div>
+
+<!-- ===== 第 1 组：查找 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">① 查找 / 判断 <span class="hwj_tag">indexOf · lastIndexOf · includes · startsWith · endsWith · charAt</span></div>
+  <div class="hwj_grid" id="hwj_g1"></div>
+</div>
+
+<!-- ===== 第 2 组：截取 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">② 截取子串 <span class="hwj_tag">slice · substring · substr</span></div>
+  <div class="hwj_grid" id="hwj_g2"></div>
+</div>
+
+<!-- ===== 第 3 组：大小写 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">③ 大小写 / 去空格 / 填充 <span class="hwj_tag">toUpperCase · toLowerCase · trim · trimStart · trimEnd</span></div>
+  <div class="hwj_grid" id="hwj_g3"></div>
+</div>
+
+<!-- ===== 第 4 组：替换 / 拼接 / 重复 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">④ 替换 / 拼接 / 重复 <span class="hwj_tag">replace · replaceAll · concat · repeat</span></div>
+  <div class="hwj_grid" id="hwj_g4"></div>
+</div>
+
+<!-- ===== 第 5 组：拆分数组 / 长度 ===== -->
+<div class="hwj_section">
+  <div class="hwj_section-title">⑤ 拆分 / 长度 / 字符编码 <span class="hwj_tag">split · length · charCodeAt</span></div>
+  <div class="hwj_grid" id="hwj_g5"></div>
+</div>
+
+<script>
+  // ============ 原始字符串 ============
+  const hwj_ORIGIN = "Hello JavaScript World!";
+
+  function hwj_showSource() {
+    const charsEl = document.getElementById('hwj_chars');
+    const idxEl   = document.getElementById('hwj_idx');
+    charsEl.innerHTML = '';
+    idxEl.innerHTML   = '';
+    for (let i = 0; i < hwj_ORIGIN.length; i++) {
+      const c = hwj_ORIGIN[i];
+      const s1 = document.createElement('span');
+      s1.textContent = c === ' ' ? '␣' : c;
+      if (c === ' ') { s1.classList.add('space'); s1.classList.add('space_real'); }
+      charsEl.appendChild(s1);
+
+      const s2 = document.createElement('span');
+      s2.textContent = i;
+      idxEl.appendChild(s2);
+    }
+  }
+  hwj_showSource();
+
+  // ============ 工具：在原字符串上高亮子串 ============
+  function hwj_highlight(str, start, end, cls) {
+    // [start, end) 范围
+    let out = '';
+    for (let i = 0; i < str.length; i++) {
+      let ch = str[i] === ' ' ? '␣' : str[i];
+      if (i >= start && i < end) {
+        out += `<span class="${cls || 'hwj_hit'}">${ch}</span>`;
+      } else {
+        out += ch;
+      }
+    }
+    return out;
+  }
+  function hwj_retSpan(v, isBool) {
+    if (typeof v === 'boolean') {
+      return `<span class="hwj_ret ${v ? 'hwj_bool-true' : 'hwj_bool-false'}">${v}</span>`;
+    }
+    return `<span class="hwj_ret">${typeof v === 'string' ? '"' + v + '"' : v}</span>`;
+  }
+  function hwj_strVis(html) {
+    return `<span class="hwj_str-vis">${html}</span>`;
+  }
+
+  function hwj_method(name, desc, codeStr, runFn) {
+    const card = document.createElement('div');
+    card.className = 'hwj_method';
+    card.innerHTML = `
+      <span class="hwj_method-name">${name}</span>
+      <div class="hwj_method-desc">${desc}</div>
+      <div class="hwj_code">${codeStr}</div>
+      <button class="hwj_runbtn">▶ 运行</button>
+      <div class="hwj_out"></div>
+    `;
+    card.querySelector('button').addEventListener('click', function () {
+      const out = card.querySelector('.hwj_out');
+      out.innerHTML = runFn();
+    });
+    return card;
+  }
+
+  // ============ ① 查找 / 判断 ============
+  const g1 = document.getElementById('hwj_g1');
+
+  g1.appendChild(hwj_method(
+    'indexOf(search)',
+    '返回子串第一次出现的索引；找不到返回 -1。第二个参数可指定起始位置。',
+    `s.indexOf('Java');    // 6\ns.indexOf('xyz');     // -1\ns.indexOf('l', 5);    // 从索引5开始找 l`,
+    function () {
+      const r1 = hwj_ORIGIN.indexOf('Java');
+      const r2 = hwj_ORIGIN.indexOf('xyz');
+      const r3 = hwj_ORIGIN.indexOf('l', 5);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">indexOf('Java') → ${hwj_retSpan(r1)}  ${hwj_strVis(hwj_highlight(hwj_ORIGIN, r1, r1+4))}</div>`;
+      html += `<div class="hwj_out-row">indexOf('xyz')  → ${hwj_retSpan(r2)} (不存在)</div>`;
+      html += `<div class="hwj_out-row">indexOf('l', 5) → ${hwj_retSpan(r3)}  ${hwj_strVis(hwj_highlight(hwj_ORIGIN, r3, r3+1))}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'lastIndexOf(search)',
+    '返回子串**最后一次**出现的索引；找不到返回 -1。',
+    `s.lastIndexOf('l');   // 找最后一个 l`,
+    function () {
+      const r = hwj_ORIGIN.lastIndexOf('l');
+      // 高亮：找所有 'l'，标出最后一个
+      let lastIdx = -1;
+      for (let i = 0; i < hwj_ORIGIN.length; i++) if (hwj_ORIGIN[i] === 'l') lastIdx = i;
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">lastIndexOf('l') → ${hwj_retSpan(r)}</div>`;
+      html += `<div class="hwj_out-row">最后一个 'l' 高亮: ${hwj_strVis(hwj_highlight(hwj_ORIGIN, r, r+1))}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'includes(search)',
+    '是否包含某子串，返回 true / false（区分大小写）。',
+    `s.includes('Java');   // true\ns.includes('java');   // false`,
+    function () {
+      const r1 = hwj_ORIGIN.includes('Java');
+      const r2 = hwj_ORIGIN.includes('java');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">includes('Java') → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">includes('java') → ${hwj_retSpan(r2)} (区分大小写)</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'startsWith(prefix)',
+    '字符串是否以某子串开头，返回 true / false。',
+    `s.startsWith('Hello');   // true\ns.startsWith('World');   // false`,
+    function () {
+      const r1 = hwj_ORIGIN.startsWith('Hello');
+      const r2 = hwj_ORIGIN.startsWith('World');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">startsWith('Hello') → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">startsWith('World') → ${hwj_retSpan(r2)}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'endsWith(suffix)',
+    '字符串是否以某子串结尾，返回 true / false。',
+    `s.endsWith('!');         // true\ns.endsWith('World');     // false`,
+    function () {
+      const r1 = hwj_ORIGIN.endsWith('!');
+      const r2 = hwj_ORIGIN.endsWith('World');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">endsWith('!')     → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">endsWith('World') → ${hwj_retSpan(r2)}</div>`;
+      return html;
+    }
+  ));
+
+  g1.appendChild(hwj_method(
+    'charAt(index)',
+    '返回指定索引位置的字符；越界返回空串。\n（也可以用 s[index] 下标访问）',
+    `s.charAt(0);    // 'H'\ns.charAt(11);   // 'W'\ns.charAt(99);   // ''`,
+    function () {
+      const r1 = hwj_ORIGIN.charAt(0);
+      const r2 = hwj_ORIGIN.charAt(11);
+      const r3 = hwj_ORIGIN.charAt(99);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">charAt(0)  → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">charAt(11) → ${hwj_retSpan(r2)}</div>`;
+      html += `<div class="hwj_out-row">charAt(99) → ${hwj_retSpan(r3)} (越界)</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ② 截取子串 ============
+  const g2 = document.getElementById('hwj_g2');
+
+  g2.appendChild(hwj_method(
+    'slice(start, end)',
+    '截取 [start, end) 区间。支持**负数索引**（-1 表示最后一个字符）。',
+    `s.slice(6, 16);    // 'JavaScript'\ns.slice(-6);        // 'World!' (倒数6个)`,
+    function () {
+      const r1 = hwj_ORIGIN.slice(6, 16);
+      const r2 = hwj_ORIGIN.slice(-6);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">slice(6, 16) → ${hwj_strVis(hwj_highlight(hwj_ORIGIN, 6, 16, 'hwj_slice'))}</div>`;
+      html += `<div class="hwj_out-row">                 返回值: ${hwj_retSpan(r1)}</div>`;
+      const start2 = hwj_ORIGIN.length - 6;
+      html += `<div class="hwj_out-row">slice(-6)    → ${hwj_strVis(hwj_highlight(hwj_ORIGIN, start2, hwj_ORIGIN.length, 'hwj_slice'))}</div>`;
+      html += `<div class="hwj_out-row">                 返回值: ${hwj_retSpan(r2)}</div>`;
+      return html;
+    }
+  ));
+
+  g2.appendChild(hwj_method(
+    'substring(start, end)',
+    '截取 [start, end)。**不支持负数**（负数当作 0）。\nstart > end 时会自动交换。',
+    `s.substring(6, 16);   // 'JavaScript'\ns.substring(16, 6);   // 自动交换，同上`,
+    function () {
+      const r1 = hwj_ORIGIN.substring(6, 16);
+      const r2 = hwj_ORIGIN.substring(16, 6);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">substring(6, 16)  → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">substring(16, 6)  → ${hwj_retSpan(r2)} (自动交换)</div>`;
+      return html;
+    }
+  ));
+
+  g2.appendChild(hwj_method(
+    'substr(start, length)',
+    '从 start 开始，截取 length 个字符。\nstart 可以是负数（倒数）。\n⚠ 已标记为**废弃**，建议用 slice/substring。',
+    `s.substr(6, 10);   // 'JavaScript'\ns.substr(-5, 5);   // 'orld!'`,
+    function () {
+      const r1 = hwj_ORIGIN.substr(6, 10);
+      const r2 = hwj_ORIGIN.substr(-5, 5);
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">substr(6, 10)  → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">substr(-5, 5)  → ${hwj_retSpan(r2)}</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ③ 大小写 / 去空格 ============
+  const g3 = document.getElementById('hwj_g3');
+
+  g3.appendChild(hwj_method(
+    'toUpperCase()',
+    '全部转大写，返回新字符串（不修改原串）。',
+    `s.toUpperCase();`,
+    function () {
+      const r = hwj_ORIGIN.toUpperCase();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">toUpperCase() → ${hwj_retSpan(r)}</div>`;
+      return html;
+    }
+  ));
+
+  g3.appendChild(hwj_method(
+    'toLowerCase()',
+    '全部转小写，返回新字符串。',
+    `s.toLowerCase();`,
+    function () {
+      const r = hwj_ORIGIN.toLowerCase();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">toLowerCase() → ${hwj_retSpan(r)}</div>`;
+      return html;
+    }
+  ));
+
+  g3.appendChild(hwj_method(
+    'trim() / trimStart() / trimEnd()',
+    '去除首尾空白。trimStart 只去开头，trimEnd 只去结尾。',
+    `'  abc  '.trim();        // 'abc'\n'  abc  '.trimStart(); // 'abc  '\n'  abc  '.trimEnd();   // '  abc'`,
+    function () {
+      const s = '  Hello  ';
+      const r1 = s.trim();
+      const r2 = s.trimStart();
+      const r3 = s.trimEnd();
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_retSpan(s)}</div>`;
+      html += `<div class="hwj_out-row">trim()       → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">trimStart()  → ${hwj_retSpan(r2)}</div>`;
+      html += `<div class="hwj_out-row">trimEnd()    → ${hwj_retSpan(r3)}</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ④ 替换 / 拼接 / 重复 ============
+  const g4 = document.getElementById('hwj_g4');
+
+  g4.appendChild(hwj_method(
+    'replace(search, replacement)',
+    '替换。第一个参数可以是字符串（只替换第一个）或**正则**（可全局替换）。',
+    `// 字符串：只替换第一个\n'abcabc'.replace('a','X');   // 'Xbcabc'\n// 正则 /g：全部替换\n'abcabc'.replace(/a/g,'X');  // 'XbcXbc'`,
+    function () {
+      const base = 'abracadabra';
+      const r1 = base.replace('a', '@');
+      const r2 = base.replace(/a/g, '@');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(base)}</div>`;
+      html += `<div class="hwj_out-row">replace('a','@')    → ${hwj_retSpan(r1)}  (只替换第一个)</div>`;
+      html += `<div class="hwj_out-row">replace(/a/g,'@') → ${hwj_retSpan(r2)}  (/g 全局替换)</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'replaceAll(search, replacement)',
+    'ES2021 新增：一次性替换所有匹配项（不必写正则 /g）。',
+    `'abracadabra'.replaceAll('a','@');  // '@br@c@d@br@'`,
+    function () {
+      const base = 'abracadabra';
+      const r = base.replaceAll('a', '@');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(base)}</div>`;
+      html += `<div class="hwj_out-row">replaceAll('a','@') → ${hwj_retSpan(r)}</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'concat(...strings)',
+    '拼接字符串，返回新字符串。（不如直接用 + 运算符常用）',
+    `'Hello'.concat(' ', 'World');   // 'Hello World'`,
+    function () {
+      const r = 'Hello'.concat(' ', 'World');
+      let html = `<div class="hwj_out-row">'Hello'.concat(' ', 'World') → ${hwj_retSpan(r)}</div>`;
+      html += `<div class="hwj_out-row" style="color:#888;font-size:11px;">// 等价于 'Hello' + ' ' + 'World'</div>`;
+      return html;
+    }
+  ));
+
+  g4.appendChild(hwj_method(
+    'repeat(count)',
+    '把字符串重复 count 次，返回新字符串。',
+    `'ha'.repeat(3);   // 'hahaha'\n'-'.repeat(5);   // '-----'`,
+    function () {
+      const r1 = 'ha'.repeat(3);
+      const r2 = '-'.repeat(5);
+      let html = `<div class="hwj_out-row">'ha'.repeat(3) → ${hwj_retSpan(r1)}</div>`;
+      html += `<div class="hwj_out-row">'-'.repeat(5) → ${hwj_retSpan(r2)}</div>`;
+      return html;
+    }
+  ));
+
+  // ============ ⑤ 拆分 / 长度 / 字符编码 ============
+  const g5 = document.getElementById('hwj_g5');
+
+  g5.appendChild(hwj_method(
+    'split(separator)',
+    '按分隔符把字符串拆成**数组**。separator 可以是字符串或正则。',
+    `'a,b,c'.split(',');       // ['a','b','c']\n'a b c'.split(' ');       // ['a','b','c']\n'hello'.split('');        // ['h','e','l','l','o']`,
+    function () {
+      const r1 = hwj_ORIGIN.split(' ');
+      const r2 = hwj_ORIGIN.split('');
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row">split(' ') → [${r1.map(v => hwj_retSpan(v)).join(', ')}]</div>`;
+      html += `<div class="hwj_out-row" style="margin-top:8px;">split('') → [${r2.map(v => hwj_retSpan(v)).join(', ')}]</div>`;
+      return html;
+    }
+  ));
+
+  g5.appendChild(hwj_method(
+    '.length',
+    '字符串**属性**（不是方法！），返回字符个数。',
+    `s.length;   // 23`,
+    function () {
+      let html = `<div class="hwj_out-row"><span class="hwj_out-label">原:</span>${hwj_strVis(hwj_ORIGIN)}</div>`;
+      html += `<div class="hwj_out-row"><span style="color:#888;">'Hello JavaScript World!'.length</span> → ${hwj_retSpan(hwj_ORIGIN.length)}</div>`;
+      return html;
+    }
+  ));
+
+  g5.appendChild(hwj_method(
+    'charCodeAt(index) / codePointAt(index)',
+    '返回指定位置字符的 **Unicode 编码**（数字）。\ncharCodeAt 返回 UTF-16 两字节内的值；\ncodePointAt 可正确处理 emoji 等 4 字节字符。',
+    `'A'.charCodeAt(0);   // 65\n'中'.charCodeAt(0);  // 20013\n'😀'.codePointAt(0); // 128512`,
+    function () {
+      const r1 = 'A'.charCodeAt(0);
+      const r2 = '中'.charCodeAt(0);
+      const r3 = '😀'.codePointAt(0);
+      let html = `<div class="hwj_out-row">'A'.charCodeAt(0)    → ${hwj_retSpan(r1)} (0x${r1.toString(16).toUpperCase()})</div>`;
+      html += `<div class="hwj_out-row">'中'.charCodeAt(0)   → ${hwj_retSpan(r2)} (0x${r2.toString(16).toUpperCase()})</div>`;
+      html += `<div class="hwj_out-row">'😀'.codePointAt(0) → ${hwj_retSpan(r3)} (0x${r3.toString(16).toUpperCase()})</div>`;
+      return html;
+    }
+  ));
+</script>
+
+</body>
+</html>
