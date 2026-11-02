@@ -171,3 +171,18 @@
 时间: 2026-10-29-17-10
 模型: GLM-5.3-FlashX (MainAgent)
 提示词: 新建16-4.html网页，根据3张参考效果图（1/2/3.jpg）与img目录切图，编写像素级还原的Tab选项卡联动页面：左侧主编推荐固定栏（rui.jpg+★力荐角标+推荐文章），右侧流行小说/社科历史/文学艺术三Tab，联动切换8本图书（4列×2行）与右侧10条订阅排行榜（前三名红底白字），主色#789f14，价格红色，虚线分割，鼠标移入或点击触发切换，原生JS实现
+
+---
+时间: 2026-11-02-10-30
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 1、完成17-1.html，展示json。2、完成17-2.html获取https://jsonplaceholder.typicode.com/users的数据并展示，接口可以跨域访问，使用fetch和原生代码实现。3、完成17-3.html和17-3-detail.html，显示列表和列表详情，数据来源于接口，使用fetch，列表https://dummyjson.com/products?limit=8默认商品列表，详情https://dummyjson.com/products/1根据ID获取单个商品
+
+---
+时间: 2026-11-02-11-40
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 4、完成17-4.html，对远程数据接口进行测试，支持get、post等，显示返回的数据和错误提示信息，示例post接口https://jsonplaceholder.typicode.com/posts。5、完成17-5.html，展示javascript的两种定时器
+
+---
+时间: 2026-11-02-13-20
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 完成17-6.html，使用promise和async完成异步操作的演示包饺子的流程。先买原料（线上线下同时购买，完成任何一个即可进行下一步），取原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子煮饺子，然后吃饺子。使用setTimeout模拟每一个流程，如买原料6s。在页面上显示流程

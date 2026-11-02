@@ -1,0 +1,230 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：fetch 远程接口测试工具（支持 GET / POST / PUT / DELETE / PATCH，显示响应数据与错误提示）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-4 接口测试工具（fetch）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 20px; margin-bottom: 18px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #f0f0f0; }
+
+  /* 快捷示例 */
+  .hwj_presets { margin-bottom: 12px; }
+  .hwj_presets span { color: #999; font-size: 12px; margin-right: 6px; }
+  .hwj_chip {
+    display: inline-block; margin: 0 8px 6px 0;
+    padding: 4px 12px; background: #f1f5f9; border: 1px solid #e2e8f0;
+    border-radius: 20px; font-size: 12px; cursor: pointer; color: #475569;
+  }
+  .hwj_chip:hover { background: #eef2ff; border-color: #c7d2fe; color: #4338ca; }
+
+  /* 请求行 */
+  .hwj_row { display: flex; gap: 10px; }
+  .hwj_method {
+    width: 110px; padding: 9px 10px; font-size: 13px; font-family: Consolas, monospace;
+    border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; cursor: pointer;
+  }
+  .hwj_url { flex: 1; padding: 9px 12px; font-size: 13px; font-family: Consolas, monospace; border: 1px solid #d1d5db; border-radius: 6px; }
+  .hwj_url:focus { outline: none; border-color: #2563eb; }
+  .hwj_send {
+    width: 110px; background: #2563eb; color: #fff; border: 0; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .hwj_send:hover { background: #1d4ed8; }
+  .hwj_send:disabled { background: #93c5fd; cursor: not-allowed; }
+
+  /* 请求体 */
+  .hwj_bodyLabel { margin: 12px 0 6px; font-size: 13px; color: #555; }
+  .hwj_body {
+    width: 100%; height: 110px; padding: 10px 12px;
+    font-family: Consolas, monospace; font-size: 13px; line-height: 1.7;
+    border: 1px solid #d1d5db; border-radius: 6px; resize: vertical;
+  }
+  .hwj_body:focus { outline: none; border-color: #2563eb; }
+
+  /* 响应状态条 */
+  .hwj_statusBar { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; font-size: 13px; min-height: 22px; }
+  .hwj_code { padding: 2px 12px; border-radius: 4px; color: #fff; font-family: Consolas, monospace; font-weight: bold; }
+  .hwj_code.hwj_ok { background: #16a34a; }
+  .hwj_code.hwj_bad { background: #dc2626; }
+  .hwj_ms { color: #666; }
+
+  /* 响应体 / 错误 */
+  .hwj_resp {
+    background: #0f172a; color: #4ade80;
+    font-family: Consolas, monospace; font-size: 13px; line-height: 1.7;
+    padding: 14px 16px; border-radius: 8px;
+    max-height: 460px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  .hwj_resp.hwj_isErr { color: #f87171; }
+  .hwj_resp.hwj_isInfo { color: #7dd3fc; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>远程接口测试工具</h1>
+    <p>基于 fetch 实现，支持 <code>GET</code> / <code>POST</code> / <code>PUT</code> / <code>DELETE</code> / <code>PATCH</code>，显示响应数据、HTTP 状态码与错误提示（15 秒超时）</p>
+  </div>
+
+  <!-- 请求配置 -->
+  <div class="hwj_card">
+    <h2>① 请求配置</h2>
+
+    <div class="hwj_presets">
+      <span>快捷示例：</span>
+      <span class="hwj_chip" onclick="hwj_preset('GET','https://jsonplaceholder.typicode.com/users','')">GET 查询全部用户</span>
+      <span class="hwj_chip" onclick="hwj_preset('GET','https://jsonplaceholder.typicode.com/posts/1','')">GET 查询单篇文章</span>
+      <span class="hwj_chip" onclick="hwj_preset('POST','https://jsonplaceholder.typicode.com/posts',hwj_POST_SAMPLE)">POST 新增文章</span>
+      <span class="hwj_chip" onclick="hwj_preset('PUT','https://jsonplaceholder.typicode.com/posts/1',hwj_POST_SAMPLE)">PUT 更新文章</span>
+      <span class="hwj_chip" onclick="hwj_preset('DELETE','https://jsonplaceholder.typicode.com/posts/1','')">DELETE 删除文章</span>
+    </div>
+
+    <div class="hwj_row">
+      <select class="hwj_method" id="hwj_method">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+        <option>PATCH</option>
+      </select>
+      <input class="hwj_url" id="hwj_url" value="https://jsonplaceholder.typicode.com/users" spellcheck="false">
+      <button class="hwj_send" id="hwj_sendBtn" onclick="hwj_send()">发 送</button>
+    </div>
+
+    <div class="hwj_bodyLabel">请求体 Body（POST / PUT / PATCH 时发送，JSON 格式）：</div>
+    <textarea class="hwj_body" id="hwj_body" spellcheck="false">{
+  "title": "袁磊的测试文章",
+  "body": "这是通过 fetch 发送的内容",
+  "userId": 1
+}</textarea>
+  </div>
+
+  <!-- 响应结果 -->
+  <div class="hwj_card">
+    <h2>② 响应结果</h2>
+    <div class="hwj_statusBar" id="hwj_statusBar"></div>
+    <div class="hwj_resp hwj_isInfo" id="hwj_resp">填写上方请求后点击"发送"，响应数据会显示在这里…</div>
+  </div>
+</div>
+
+<script>
+  var hwj_POST_SAMPLE = '{\n  "title": "袁磊的测试文章",\n  "body": "这是通过 fetch 发送的内容",\n  "userId": 1\n}';
+
+  /* HTML 转义 */
+  function hwj_esc(s) {
+    return String(s).replace(/[&<>]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
+    });
+  }
+
+  /* 快捷示例填充 */
+  function hwj_preset(method, url, body) {
+    document.getElementById('hwj_method').value = method;
+    document.getElementById('hwj_url').value = url;
+    document.getElementById('hwj_body').value = body;
+  }
+
+  /* 发送请求 */
+  function hwj_send() {
+    var method = document.getElementById('hwj_method').value;
+    var url = document.getElementById('hwj_url').value.trim();
+    var bodyText = document.getElementById('hwj_body').value.trim();
+    var btn = document.getElementById('hwj_sendBtn');
+    var bar = document.getElementById('hwj_statusBar');
+    var respBox = document.getElementById('hwj_resp');
+
+    if (!url) {
+      bar.innerHTML = '<span style="color:#dc2626;">✗ 请先填写接口地址 URL</span>';
+      return;
+    }
+
+    /* 组装 fetch 配置 */
+    var options = {
+      method: method,
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      signal: null
+    };
+    if (method !== 'GET' && bodyText) {
+      try {
+        JSON.parse(bodyText);                      // 先校验 JSON 合法性
+        options.body = bodyText;
+      } catch (e) {
+        bar.innerHTML = '<span style="color:#dc2626;">✗ 请求体不是合法 JSON：' + hwj_esc(e.message) + '</span>';
+        return;
+      }
+    }
+
+    /* 15 秒超时 */
+    var ctrl = new AbortController();
+    options.signal = ctrl.signal;
+    var timer = setTimeout(function () { ctrl.abort(); }, 15000);
+
+    btn.disabled = true;
+    bar.innerHTML = '<span style="color:#2563eb;">⏳ 正在请求 ' + method + ' ' + hwj_esc(url) + ' …</span>';
+    respBox.className = 'hwj_resp hwj_isInfo';
+    respBox.textContent = '请求已发出，等待响应…';
+
+    var startTime = new Date().getTime();
+
+    fetch(url, options)
+      .then(function (resp) {
+        clearTimeout(timer);
+        var ms = new Date().getTime() - startTime;
+        /* 状态条 */
+        bar.innerHTML =
+          '<span class="hwj_code ' + (resp.ok ? 'hwj_ok' : 'hwj_bad') + '">HTTP ' + resp.status + ' ' + resp.statusText + '</span>' +
+          '<span class="hwj_ms">耗时 ' + ms + ' ms</span>' +
+          '<span class="hwj_ms">Content-Type: ' + hwj_esc(resp.headers.get('content-type') || '—') + '</span>';
+        return resp.text();                        // 先取文本，再尝试格式化
+      })
+      .then(function (text) {
+        btn.disabled = false;
+        try {
+          var data = JSON.parse(text);
+          respBox.className = 'hwj_resp';
+          respBox.textContent = '✓ 响应数据（格式化 JSON）：\n\n' + JSON.stringify(data, null, 2);
+        } catch (e) {
+          respBox.className = 'hwj_resp';
+          respBox.textContent = '✓ 响应内容（非 JSON，原文）：\n\n' + text;
+        }
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        btn.disabled = false;
+        var msg = (err.name === 'AbortError') ? '请求超时（15 秒），请检查是否已开启代理' : err.message;
+        bar.innerHTML = '<span style="color:#dc2626;">✗ 请求失败</span>';
+        respBox.className = 'hwj_resp hwj_isErr';
+        respBox.textContent =
+          '✗ 错误类型：' + (err.name === 'AbortError' ? 'TimeoutError（超时）' : err.name) + '\n' +
+          '✗ 错误信息：' + msg + '\n\n' +
+          '常见原因：\n' +
+          '  1. 未开启代理，无法访问国外接口\n' +
+          '  2. URL 地址拼写错误\n' +
+          '  3. 网络连接中断';
+      });
+  }
+</script>
+
+</body>
+</html>

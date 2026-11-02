@@ -1,0 +1,319 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：Promise 与 async/await 异步流程演示 —— 包饺子
+  （买原料 race → 取原料 → 和面+和馅 all → 包饺子 → 煮饺子 → 吃饺子，setTimeout 模拟耗时）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-6 Promise 与 async 异步演示 — 包饺子</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_toolbar { margin-bottom: 14px; }
+  .hwj_btn {
+    padding: 10px 26px; margin-right: 10px;
+    background: #2563eb; color: #fff; border: 0; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .hwj_btn:hover { background: #1d4ed8; }
+  .hwj_btn.hwj_ghost { background: #fff; color: #2563eb; border: 1px solid #2563eb; }
+  .hwj_btn:disabled { background: #93c5fd; cursor: not-allowed; }
+  .hwj_btn.hwj_ghost:disabled { color: #93c5fd; border-color: #93c5fd; }
+  .hwj_elapsed { color: #666; font-size: 13px; margin-left: 8px; }
+
+  .hwj_main { display: flex; gap: 18px; }
+
+  /* 左：流程图 */
+  .hwj_flow { width: 560px; flex: 0 0 560px; }
+  .hwj_step {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border: 1px solid #e5e7eb; border-left: 4px solid #d1d5db;
+    border-radius: 8px; padding: 12px 16px; margin-bottom: 10px;
+    transition: border-color .3s, box-shadow .3s;
+  }
+  .hwj_step.hwj_doing { border-left-color: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
+  .hwj_step.hwj_done  { border-left-color: #16a34a; }
+  .hwj_step .hwj_no {
+    width: 30px; height: 30px; line-height: 30px; flex: 0 0 30px;
+    text-align: center; border-radius: 50%;
+    background: #e5e7eb; color: #666; font-weight: bold; font-size: 14px;
+  }
+  .hwj_step.hwj_doing .hwj_no { background: #f59e0b; color: #fff; }
+  .hwj_step.hwj_done  .hwj_no { background: #16a34a; color: #fff; }
+  .hwj_step .hwj_name { font-weight: bold; font-size: 14px; }
+  .hwj_step .hwj_tag {
+    display: inline-block; margin-left: 8px; padding: 1px 8px;
+    background: #eef2ff; color: #4338ca; border-radius: 10px; font-size: 11px; font-weight: normal;
+  }
+  .hwj_step .hwj_detail { color: #999; font-size: 12px; margin-top: 2px; }
+  .hwj_step .hwj_state {
+    margin-left: auto; flex: 0 0 auto; font-size: 12px; color: #999;
+    min-width: 74px; text-align: right;
+  }
+  .hwj_step.hwj_doing .hwj_state { color: #b45309; }
+  .hwj_step.hwj_done  .hwj_state { color: #16a34a; }
+  .hwj_arrow { text-align: center; color: #cbd5e1; margin: -4px 0 4px; font-size: 14px; }
+  .hwj_sub { color: #888; font-size: 12px; margin-top: 4px; }
+  .hwj_sub b.hwj_ok { color: #16a34a; }
+  .hwj_sub b.hwj_wait { color: #b45309; }
+
+  /* 右：运行日志 */
+  .hwj_logBox { flex: 1; min-width: 0; }
+  .hwj_logTitle { font-size: 14px; font-weight: bold; padding-bottom: 8px; }
+  .hwj_log {
+    background: #0f172a; border-radius: 8px; padding: 14px 16px;
+    height: 560px; overflow-y: auto;
+    font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.9; color: #4ade80;
+  }
+  .hwj_log .hwj_t { color: #64748b; margin-right: 8px; }
+  .hwj_log .hwj_l-info { color: #7dd3fc; }
+  .hwj_log .hwj_l-ok { color: #4ade80; }
+  .hwj_log .hwj_l-warn { color: #facc15; }
+  .hwj_log .hwj_l-eat { color: #f472b6; }
+
+  /* 知识点卡片 */
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-top: 18px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>Promise 与 async/await 异步演示 — 包饺子 🥟</h1>
+    <p>每个流程用 <code>setTimeout</code> 模拟耗时；买原料用 <code>Promise.race</code>（任一完成即可），和面/和馅用 <code>Promise.all</code>（都完成才继续），主流程用 <code>async/await</code> 串联</p>
+  </div>
+
+  <div class="hwj_toolbar">
+    <button class="hwj_btn" id="hwj_runBtn" onclick="hwj_run()">▶ 开始包饺子</button>
+    <button class="hwj_btn hwj_ghost" onclick="location.reload()">重 置</button>
+    <span class="hwj_elapsed" id="hwj_elapsed"></span>
+  </div>
+
+  <div class="hwj_main">
+    <!-- 左：流程图 -->
+    <div class="hwj_flow">
+      <div class="hwj_step" id="hwj_step1">
+        <div class="hwj_no">1</div>
+        <div>
+          <div class="hwj_name">买原料 <span class="hwj_tag">Promise.race · 并发</span></div>
+          <div class="hwj_detail">线上购买 6 秒 ｜ 线下购买 8 秒 —— 任一完成即可进行下一步</div>
+          <div class="hwj_sub" id="hwj_sub1">线上：待开始 ｜ 线下：待开始</div>
+        </div>
+        <div class="hwj_state" id="hwj_state1">待开始</div>
+      </div>
+      <div class="hwj_arrow">↓</div>
+
+      <div class="hwj_step" id="hwj_step2">
+        <div class="hwj_no">2</div>
+        <div>
+          <div class="hwj_name">取原料</div>
+          <div class="hwj_detail">去取回买到的原料，3 秒</div>
+        </div>
+        <div class="hwj_state" id="hwj_state2">待开始</div>
+      </div>
+      <div class="hwj_arrow">↓</div>
+
+      <div class="hwj_step" id="hwj_step3">
+        <div class="hwj_no">3</div>
+        <div>
+          <div class="hwj_name">和面 + 和馅 <span class="hwj_tag">Promise.all · 并发</span></div>
+          <div class="hwj_detail">和面 5 秒 ｜ 和馅 4 秒 —— 两个都完成才能包饺子</div>
+          <div class="hwj_sub" id="hwj_sub3">和面：待开始 ｜ 和馅：待开始</div>
+        </div>
+        <div class="hwj_state" id="hwj_state3">待开始</div>
+      </div>
+      <div class="hwj_arrow">↓</div>
+
+      <div class="hwj_step" id="hwj_step4">
+        <div class="hwj_no">4</div>
+        <div>
+          <div class="hwj_name">包饺子</div>
+          <div class="hwj_detail">面和馅都就位，开始包，6 秒</div>
+        </div>
+        <div class="hwj_state" id="hwj_state4">待开始</div>
+      </div>
+      <div class="hwj_arrow">↓</div>
+
+      <div class="hwj_step" id="hwj_step5">
+        <div class="hwj_no">5</div>
+        <div>
+          <div class="hwj_name">煮饺子</div>
+          <div class="hwj_detail">下锅开煮，5 秒</div>
+        </div>
+        <div class="hwj_state" id="hwj_state5">待开始</div>
+      </div>
+      <div class="hwj_arrow">↓</div>
+
+      <div class="hwj_step" id="hwj_step6">
+        <div class="hwj_no">6</div>
+        <div>
+          <div class="hwj_name">吃饺子 🥢</div>
+          <div class="hwj_detail">出锅开吃，2 秒</div>
+        </div>
+        <div class="hwj_state" id="hwj_state6">待开始</div>
+      </div>
+    </div>
+
+    <!-- 右：日志 -->
+    <div class="hwj_logBox">
+      <div class="hwj_logTitle">运行日志（记录每个异步节点的发生时间）</div>
+      <div class="hwj_log" id="hwj_log"><div><span class="hwj_t">[0.0s]</span><span class="hwj_l-info">点击"开始包饺子"运行 async 流程…</span></div></div>
+    </div>
+  </div>
+
+  <!-- 知识点 -->
+  <div class="hwj_card">
+    <h2>涉及的知识点</h2>
+    <p>① <b>Promise</b>：用 <code>new Promise((resolve, reject) =&gt; setTimeout(resolve, 毫秒))</code> 把 setTimeout 包装成可 await 的异步任务。</p>
+    <p>② <b>Promise.race</b>：多个 Promise 同时跑，<b>谁先完成就先用谁</b> —— 用于"买原料"：线上 6s、线下 8s 同时买，6 秒时线上先完成即继续，不必等线下。</p>
+    <p>③ <b>Promise.all</b>：多个 Promise 同时跑，<b>全部完成才继续</b> —— 用于"和面 5s + 和馅 4s"：4 秒时馅好了还要等面，5 秒时两个都好才进入包饺子。</p>
+    <p>④ <b>async / await</b>：<code>async function</code> 里用 <code>await</code> 顺序等待每一步，让异步代码写得像同步流程一样清晰。</p>
+  </div>
+</div>
+
+<script>
+  /* ============ 每个流程的耗时（秒），setTimeout 模拟 ============ */
+  var hwj_TIME = {
+    buyOnline: 6,   // 线上买原料
+    buyOffline: 8,  // 线下买原料
+    take: 3,        // 取原料
+    dough: 5,       // 和面
+    filling: 4,     // 和馅
+    wrap: 6,        // 包饺子
+    boil: 5,        // 煮饺子
+    eat: 2          // 吃饺子
+  };
+
+  var hwj_t0 = 0;   // 流程开始时间戳
+
+  /* 计时 */
+  function hwj_now() {
+    return ((new Date().getTime() - hwj_t0) / 1000).toFixed(1);
+  }
+
+  /* 核心：把 setTimeout 包装成 Promise */
+  function hwj_delay(seconds) {
+    return new Promise(function (resolve) {
+      setTimeout(resolve, seconds * 1000);
+    });
+  }
+
+  /* 日志 */
+  function hwj_log(text, cls) {
+    var box = document.getElementById('hwj_log');
+    var div = document.createElement('div');
+    div.innerHTML = '<span class="hwj_t">[' + hwj_now() + 's]</span><span class="' + (cls || 'hwj_l-ok') + '">' + text + '</span>';
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;   // 自动滚到底部
+  }
+
+  /* 步骤状态：doing / done */
+  function hwj_state(n, text, mode) {
+    document.getElementById('hwj_state' + n).textContent = text;
+    var step = document.getElementById('hwj_step' + n);
+    step.className = 'hwj_step' + (mode ? ' hwj_' + mode : '');
+  }
+
+  /* 每 0.2 秒刷新总耗时显示 */
+  setInterval(function () {
+    var el = document.getElementById('hwj_elapsed');
+    if (hwj_t0 > 0) el.textContent = '总耗时：' + hwj_now() + ' 秒';
+  }, 200);
+
+  /* ============ 主流程：async / await ============ */
+  async function hwj_run() {
+    var btn = document.getElementById('hwj_runBtn');
+    btn.disabled = true;
+    hwj_t0 = new Date().getTime();
+
+    /* ── 步骤1：买原料（线上 / 线下 同时，Promise.race） ── */
+    hwj_state(1, '进行中…', 'doing');
+    hwj_log('🛒 开始买原料：线上购买(' + hwj_TIME.buyOnline + 's) 与 线下购买(' + hwj_TIME.buyOffline + 's) 同时出发 → Promise.race', 'hwj_l-info');
+
+    var hwj_online = hwj_delay(hwj_TIME.buyOnline).then(function () {
+      hwj_log('线上购买完成（' + hwj_TIME.buyOnline + 's）');
+      document.getElementById('hwj_sub1').innerHTML = '线上：<b class="hwj_ok">✓ 完成</b> ｜ 线下：<b class="hwj_wait">进行中…</b>';
+      return '线上';
+    });
+    var hwj_offline = hwj_delay(hwj_TIME.buyOffline).then(function () {
+      hwj_log('线下购买完成（' + hwj_TIME.buyOffline + 's，此时流程早已继续，无需等待）', 'hwj_l-warn');
+      document.getElementById('hwj_sub1').innerHTML = '线上：<b class="hwj_ok">✓ 完成</b> ｜ 线下：<b class="hwj_ok">✓ 完成</b>';
+      return '线下';
+    });
+
+    var hwj_winner = await Promise.race([hwj_online, hwj_offline]);   // 任一完成即通过
+    hwj_log('⚡ ' + hwj_winner + '购买先完成！Promise.race 放行，进入下一步');
+    hwj_state(1, '✓ 完成', 'done');
+
+    /* ── 步骤2：取原料 ── */
+    hwj_state(2, '进行中…', 'doing');
+    hwj_log('🚚 前往取回原料，需要 ' + hwj_TIME.take + ' 秒', 'hwj_l-info');
+    await hwj_delay(hwj_TIME.take);
+    hwj_log('✓ 原料已取回（面粉、猪肉、白菜、韭菜…）');
+    hwj_state(2, '✓ 完成', 'done');
+
+    /* ── 步骤3：和面 + 和馅（同时进行，Promise.all） ── */
+    hwj_state(3, '进行中…', 'doing');
+    hwj_log('🥣 和面(' + hwj_TIME.dough + 's) 与 和馅(' + hwj_TIME.filling + 's) 同时进行 → Promise.all', 'hwj_l-info');
+    document.getElementById('hwj_sub3').innerHTML = '和面：<b class="hwj_wait">进行中…</b> ｜ 和馅：<b class="hwj_wait">进行中…</b>';
+
+    var hwj_dough = hwj_delay(hwj_TIME.dough).then(function () {
+      hwj_log('和面完成（' + hwj_TIME.dough + 's）');
+      document.getElementById('hwj_sub3').innerHTML = '和面：<b class="hwj_ok">✓ 完成</b> ｜ 和馅：进行中…';
+    });
+    var hwj_filling = hwj_delay(hwj_TIME.filling).then(function () {
+      hwj_log('和馅完成（' + hwj_TIME.filling + 's，还在等面…）', 'hwj_l-warn');
+      document.getElementById('hwj_sub3').innerHTML = '和面：进行中… ｜ 和馅：<b class="hwj_ok">✓ 完成</b>';
+    });
+
+    await Promise.all([hwj_dough, hwj_filling]);                      // 两个都完成才通过
+    hwj_log('✅ 面和馅都准备好了！Promise.all 放行');
+    hwj_state(3, '✓ 完成', 'done');
+
+    /* ── 步骤4：包饺子 ── */
+    hwj_state(4, '进行中…', 'doing');
+    hwj_log('🥟 开始包饺子，需要 ' + hwj_TIME.wrap + ' 秒', 'hwj_l-info');
+    await hwj_delay(hwj_TIME.wrap);
+    hwj_log('✓ 包好了 88 个饺子');
+    hwj_state(4, '✓ 完成', 'done');
+
+    /* ── 步骤5：煮饺子 ── */
+    hwj_state(5, '进行中…', 'doing');
+    hwj_log('🍲 饺子下锅，煮 ' + hwj_TIME.boil + ' 秒', 'hwj_l-info');
+    await hwj_delay(hwj_TIME.boil);
+    hwj_log('✓ 饺子煮熟，出锅！');
+    hwj_state(5, '✓ 完成', 'done');
+
+    /* ── 步骤6：吃饺子 ── */
+    hwj_state(6, '进行中…', 'doing');
+    hwj_log('🥢 开吃！用时 ' + hwj_TIME.eat + ' 秒', 'hwj_l-eat');
+    await hwj_delay(hwj_TIME.eat);
+    hwj_state(6, '✓ 完成', 'done');
+    hwj_log('🎉 饺子吃完，整个异步流程结束！总耗时 ' + hwj_now() + ' 秒', 'hwj_l-eat');
+
+    btn.disabled = false;
+    btn.textContent = '▶ 再包一次';
+  }
+</script>
+
+</body>
+</html>

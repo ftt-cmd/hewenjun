@@ -1,0 +1,210 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：JSON 数据格式展示（语法规则 / 数据类型 / stringify / parse / 嵌套JSON / 容错解析）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-1 JSON 数据格式</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 20px; margin-bottom: 18px; }
+  .hwj_card h2 { font-size: 17px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+
+  /* 语法规则表 */
+  .hwj_rules { width: 100%; border-collapse: collapse; }
+  .hwj_rules th, .hwj_rules td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
+  .hwj_rules th { background: #f9fafb; }
+  .hwj_rules code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+
+  .hwj_out { background: #0f172a; color: #e2e8f0; font-family: Consolas, "Courier New", monospace; font-size: 13px; line-height: 1.7; padding: 12px 14px; border-radius: 6px; min-height: 44px; margin-top: 12px; white-space: pre-wrap; word-break: break-all; }
+  .hwj_out .hwj_ok   { color: #4ade80; }
+  .hwj_out .hwj_info { color: #7dd3fc; }
+  .hwj_out .hwj_warn { color: #facc15; }
+  .hwj_out .hwj_err  { color: #f87171; }
+
+  .hwj_run { display: inline-block; margin-top: 12px; padding: 7px 18px; background: #2563eb; color: #fff; border: 0; border-radius: 4px; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .hwj_run:hover { background: #1d4ed8; }
+
+  pre.hwj_code { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; font-family: Consolas, monospace; font-size: 13px; overflow-x: auto; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>JSON 数据格式</h1>
+    <p>JSON（JavaScript Object Notation）是一种轻量级的数据交换格式，独立于语言、易于读写，是前后端数据通信的事实标准。</p>
+  </div>
+
+  <!-- ① 语法规则 -->
+  <div class="hwj_card">
+    <h2>① JSON 语法规则</h2>
+    <table class="hwj_rules">
+      <tr><th>规则</th><th>说明</th><th>示例</th></tr>
+      <tr><td>数据是键值对</td><td>键必须是<b>双引号</b>字符串</td><td><code>"name": "袁磊"</code></td></tr>
+      <tr><td>数据由逗号分隔</td><td>最后一个成员后<b>不能</b>有逗号</td><td><code>{"a":1, "b":2}</code></td></tr>
+      <tr><td>花括号保存对象</td><td>无序键值对集合</td><td><code>{"id": 1}</code></td></tr>
+      <tr><td>方括号保存数组</td><td>有序值集合，可与对象嵌套</td><td><code>[1, "two", true]</code></td></tr>
+      <tr><td>不支持注释 / 函数 / undefined</td><td>纯数据，比 JS 对象字面量更严格</td><td><code>// 注释非法</code></td></tr>
+    </table>
+  </div>
+
+  <!-- ② 六种数据类型 -->
+  <div class="hwj_card">
+    <h2>② JSON 的六种数据类型</h2>
+    <pre class="hwj_code">{
+  "str":  "字符串（必须双引号）",
+  "num":  3.14,
+  "bool": false,
+  "null": null,
+  "obj":  { "city": "北京" },
+  "arr":  [10, 20, 30]
+}</pre>
+    <button class="hwj_run" onclick="hwj_demoTypes()">▶ 运行：构造并序列化以上 JSON</button>
+    <div class="hwj_out" id="hwj_out1">点击按钮运行…</div>
+  </div>
+
+  <!-- ③ JSON.stringify -->
+  <div class="hwj_card">
+    <h2>③ JSON.stringify()：JS 对象 → JSON 字符串</h2>
+    <pre class="hwj_code">var book = { name: "三体", price: 45.5, tags: ["科幻", "小说"] };
+var json = JSON.stringify(book, null, 2);   // 缩进 2 空格美化输出</pre>
+    <button class="hwj_run" onclick="hwj_demoStringify()">▶ 运行</button>
+    <div class="hwj_out" id="hwj_out2">点击按钮运行…</div>
+  </div>
+
+  <!-- ④ JSON.parse -->
+  <div class="hwj_card">
+    <h2>④ JSON.parse()：JSON 字符串 → JS 对象</h2>
+    <pre class="hwj_code">var json = '{"name":"袁磊","age":20,"skills":["HTML","CSS","JS"]}';
+var obj  = JSON.parse(json);
+obj.skills[1];   // → "CSS"</pre>
+    <button class="hwj_run" onclick="hwj_demoParse()">▶ 运行</button>
+    <div class="hwj_out" id="hwj_out3">点击按钮运行…</div>
+  </div>
+
+  <!-- ⑤ 嵌套 JSON -->
+  <div class="hwj_card">
+    <h2>⑤ 嵌套 JSON：对象里套数组，数组里套对象</h2>
+    <pre class="hwj_code">var klass = {
+  "className": "高级网页设计",
+  "students": [
+    { "name": "袁磊", "score": 95 },
+    { "name": "何汶军", "score": 92 }
+  ]
+};</pre>
+    <button class="hwj_run" onclick="hwj_demoNest()">▶ 运行：遍历嵌套 JSON</button>
+    <div class="hwj_out" id="hwj_out4">点击按钮运行…</div>
+  </div>
+
+  <!-- ⑥ 容错解析 -->
+  <div class="hwj_card">
+    <h2>⑥ 非法 JSON 会抛异常，用 try…catch 捕获</h2>
+    <pre class="hwj_code">JSON.parse("{ name: '袁磊' }")   // ✗ 键没用双引号 → SyntaxError</pre>
+    <button class="hwj_run" onclick="hwj_demoError()">▶ 运行：解析非法 JSON</button>
+    <div class="hwj_out" id="hwj_out5">点击按钮运行…</div>
+  </div>
+</div>
+
+<script>
+  /* 控制台风格输出 */
+  function hwj_log(id, text, cls) {
+    var box = document.getElementById(id);
+    var line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = text;
+    box.innerHTML = '';
+    box.appendChild(line);
+  }
+  function hwj_append(id, text, cls) {
+    var line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = text;
+    document.getElementById(id).appendChild(line);
+  }
+
+  /* ② 六种数据类型 */
+  function hwj_demoTypes() {
+    var obj = {
+      str: '字符串（必须双引号）',
+      num: 3.14,
+      bool: false,
+      null_: null,
+      obj: { city: '北京' },
+      arr: [10, 20, 30]
+    };
+    var json = JSON.stringify({
+      str: obj.str, num: obj.num, bool: obj.bool,
+      'null': null, obj: obj.obj, arr: obj.arr
+    }, null, 2);
+    hwj_log('hwj_out1', json, 'hwj_ok');
+    hwj_append('hwj_out1', '✓ 序列化成功，typeof 结果是 string：' + typeof json, 'hwj_info');
+  }
+
+  /* ③ stringify */
+  function hwj_demoStringify() {
+    var book = { name: '三体', price: 45.5, tags: ['科幻', '小说'] };
+    var json = JSON.stringify(book, null, 2);
+    hwj_log('hwj_out2', json, 'hwj_ok');
+    hwj_append('hwj_out2', '✓ 注意：序列化后属性名自动加上了双引号', 'hwj_info');
+    hwj_append('hwj_out2', '字符串长度 = ' + json.length, 'hwj_warn');
+  }
+
+  /* ④ parse */
+  function hwj_demoParse() {
+    var json = '{"name":"袁磊","age":20,"skills":["HTML","CSS","JS"]}';
+    var obj = JSON.parse(json);
+    hwj_log('hwj_out3', 'typeof 解析结果 = ' + typeof obj, 'hwj_info');
+    hwj_append('hwj_out3', 'obj.name   = ' + obj.name, 'hwj_ok');
+    hwj_append('hwj_out3', 'obj.age    = ' + obj.age, 'hwj_ok');
+    hwj_append('hwj_out3', 'obj.skills = ' + obj.skills.join('、'), 'hwj_ok');
+    hwj_append('hwj_out3', 'obj.skills[1] = ' + obj.skills[1], 'hwj_ok');
+  }
+
+  /* ⑤ 嵌套 JSON */
+  function hwj_demoNest() {
+    var klass = {
+      className: '高级网页设计',
+      students: [
+        { name: '袁磊', score: 95 },
+        { name: '何汶军', score: 92 }
+      ]
+    };
+    var json = JSON.stringify(klass, null, 2);
+    var back = JSON.parse(json);
+    hwj_log('hwj_out4', json, 'hwj_ok');
+    back.students.forEach(function (s, i) {
+      hwj_append('hwj_out4', '→ 学生' + (i + 1) + '：' + s.name + '，成绩 ' + s.score + ' 分', 'hwj_info');
+    });
+  }
+
+  /* ⑥ 容错 */
+  function hwj_demoError() {
+    var bad = "{ name: '袁磊' }";   // 非法：键没有双引号
+    try {
+      JSON.parse(bad);
+    } catch (e) {
+      hwj_log('hwj_out5', '✗ 捕获异常：' + e.message, 'hwj_err');
+      hwj_append('hwj_out5', '提示：JSON 的键和字符串值都必须使用双引号', 'hwj_warn');
+    }
+  }
+</script>
+
+</body>
+</html>

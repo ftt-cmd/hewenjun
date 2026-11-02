@@ -1,0 +1,135 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：fetch 商品列表页（接口：https://dummyjson.com/products?limit=8）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-3 商品列表（fetch）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_status { margin-bottom: 14px; color: #666; font-size: 13px; }
+
+  /* 8 件商品：4 列 × 2 行 */
+  .hwj_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .hwj_item {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .hwj_item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+  }
+  .hwj_item img { width: 100%; height: 170px; object-fit: cover; display: block; background: #f3f4f6; }
+  .hwj_info { padding: 12px 14px 14px; }
+  .hwj_title {
+    font-size: 13px; font-weight: bold; line-height: 1.4;
+    height: 36px; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .hwj_meta { color: #999; font-size: 12px; margin-top: 4px; }
+  .hwj_row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .hwj_price { color: #e4393c; font-size: 16px; font-weight: bold; }
+  .hwj_price small { font-size: 12px; }
+  .hwj_rating { color: #f59e0b; font-size: 12px; }
+
+  .hwj_tip { margin-top: 16px; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>商品列表（fetch 接口数据）</h1>
+    <p>接口：<code>GET https://dummyjson.com/products?limit=8</code>（支持跨域）· 点击商品查看详情</p>
+  </div>
+
+  <div class="hwj_status" id="hwj_status">⏳ 正在加载商品数据…</div>
+
+  <div class="hwj_grid" id="hwj_grid"></div>
+
+  <p class="hwj_tip">流程：fetch → resp.json() → 遍历 data.products 生成商品卡片 → 点击卡片携带 ?id= 跳转详情页。</p>
+</div>
+
+<script>
+  var HWJ_URL = 'https://dummyjson.com/products?limit=8';
+
+  function hwj_esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function hwj_loadProducts() {
+    var grid = document.getElementById('hwj_grid');
+    var status = document.getElementById('hwj_status');
+
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 15000);   // 15秒超时
+
+    fetch(HWJ_URL, { signal: ctrl.signal })
+      .then(function (resp) {
+        clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      })
+      .then(function (data) {
+        status.textContent = '✓ 加载成功，共 ' + data.products.length + ' 件商品（点击卡片查看详情）';
+
+        grid.innerHTML = data.products.map(function (p) {
+          return '<div class="hwj_item" onclick="hwj_goDetail(' + p.id + ')">' +
+                   '<img src="' + hwj_esc(p.thumbnail) + '" alt="' + hwj_esc(p.title) + '">' +
+                   '<div class="hwj_info">' +
+                     '<div class="hwj_title" title="' + hwj_esc(p.title) + '">' + hwj_esc(p.title) + '</div>' +
+                     '<div class="hwj_meta">' + hwj_esc(p.brand || '—') + ' · ' + hwj_esc(p.category) + '</div>' +
+                     '<div class="hwj_row">' +
+                       '<span class="hwj_price"><small>$</small>' + p.price + '</span>' +
+                       '<span class="hwj_rating">★ ' + p.rating.toFixed(2) + '</span>' +
+                     '</div>' +
+                   '</div>' +
+                 '</div>';
+        }).join('');
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        var msg = (err.name === 'AbortError') ? '请求超时（15秒），请检查是否已开启代理' : err.message;
+        status.textContent = '✗ 加载失败：' + msg + '（请检查网络后刷新重试）';
+        status.style.color = '#dc2626';
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#999;padding:60px 0;">商品数据加载失败</div>';
+      });
+  }
+
+  /* 跳转详情页，携带商品 ID */
+  function hwj_goDetail(id) {
+    location.href = '17-3-detail.html?id=' + id;
+  }
+
+  hwj_loadProducts();
+</script>
+
+</body>
+</html>

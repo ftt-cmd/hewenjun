@@ -1,0 +1,189 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：fetch 商品详情页（接口：https://dummyjson.com/products/{id}，ID 来自 URL 参数）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-3 商品详情（fetch）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+
+  /* 面包屑 */
+  .hwj_crumb { padding: 6px 0 14px; color: #666; font-size: 13px; }
+  .hwj_crumb a { color: #2563eb; }
+  .hwj_crumb .hwj_cur { color: #999; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px; display: flex; gap: 28px; }
+
+  /* 左：图片区 */
+  .hwj_imgs { width: 360px; flex: 0 0 360px; }
+  .hwj_mainImg { width: 360px; height: 360px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; background: #f3f4f6; }
+  .hwj_thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .hwj_thumbs img {
+    width: 62px; height: 62px; object-fit: cover;
+    border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; background: #f3f4f6;
+  }
+  .hwj_thumbs img.hwj_on, .hwj_thumbs img:hover { border-color: #2563eb; }
+
+  /* 右：信息区 */
+  .hwj_detail { flex: 1; min-width: 0; }
+  .hwj_detail h1 { font-size: 20px; line-height: 1.4; }
+  .hwj_sub { color: #999; font-size: 13px; margin-top: 6px; }
+  .hwj_sub b { color: #2563eb; font-weight: normal; }
+
+  .hwj_priceBox { background: #fff7f0; border-radius: 6px; padding: 14px 16px; margin: 14px 0; }
+  .hwj_price { color: #e4393c; font-size: 26px; font-weight: bold; }
+  .hwj_price small { font-size: 14px; }
+  .hwj_discount { margin-left: 12px; color: #e4393c; font-size: 13px; }
+  .hwj_origin { margin-left: 10px; color: #999; font-size: 13px; text-decoration: line-through; }
+
+  .hwj_props { list-style: none; margin-top: 6px; }
+  .hwj_props li { padding: 7px 0; border-bottom: 1px dotted #eee; font-size: 13px; }
+  .hwj_props .hwj_k { color: #999; display: inline-block; width: 90px; }
+  .hwj_star { color: #f59e0b; }
+
+  .hwj_tags { margin-top: 12px; }
+  .hwj_tags span {
+    display: inline-block; margin: 0 8px 8px 0;
+    padding: 3px 12px; background: #eef2ff; color: #4338ca;
+    border-radius: 20px; font-size: 12px;
+  }
+
+  .hwj_desc { margin-top: 14px; color: #555; line-height: 1.9; border-top: 1px solid #f0f0f0; padding-top: 14px; }
+
+  .hwj_status { padding: 60px 0; text-align: center; color: #999; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_crumb">
+    <a href="17-3.html">商品列表</a> <span class="hwj_cur">› 商品详情</span>
+  </div>
+
+  <div class="hwj_status" id="hwj_status">⏳ 正在加载商品详情…</div>
+
+  <div class="hwj_card" id="hwj_card" style="display:none;">
+    <!-- 左：主图 + 缩略图组 -->
+    <div class="hwj_imgs">
+      <img class="hwj_mainImg" id="hwj_mainImg" src="" alt="商品主图">
+      <div class="hwj_thumbs" id="hwj_thumbs"></div>
+    </div>
+    <!-- 右：商品信息 -->
+    <div class="hwj_detail">
+      <h1 id="hwj_title"></h1>
+      <div class="hwj_sub">品牌：<b id="hwj_brand"></b> ｜ 分类：<b id="hwj_category"></b> ｜ 商品 ID：<b id="hwj_pid"></b></div>
+
+      <div class="hwj_priceBox">
+        <span class="hwj_price"><small>$</small><span id="hwj_price"></span></span>
+        <span class="hwj_origin" id="hwj_origin"></span>
+        <span class="hwj_discount" id="hwj_discount"></span>
+      </div>
+
+      <ul class="hwj_props">
+        <li><span class="hwj_k">用户评分</span><span class="hwj_star">★ <b id="hwj_rating"></b></span></li>
+        <li><span class="hwj_k">库存数量</span><span id="hwj_stock"></span></li>
+        <li><span class="hwj_k">库存状态</span><span id="hwj_availability"></span></li>
+      </ul>
+
+      <div class="hwj_tags" id="hwj_tags"></div>
+      <div class="hwj_desc" id="hwj_desc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ① 从 URL 参数取商品 ID，默认 1（https://dummyjson.com/products/1） */
+  function hwj_getId() {
+    var q = new URLSearchParams(location.search);
+    return q.get('id') || '1';
+  }
+
+  function hwj_esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* ② 点击缩略图切换主图 */
+  function hwj_switchImg(src, el) {
+    document.getElementById('hwj_mainImg').src = src;
+    document.querySelectorAll('#hwj_thumbs img').forEach(function (t) {
+      t.classList.toggle('hwj_on', t === el);
+    });
+  }
+
+  /* ③ fetch 加载详情：https://dummyjson.com/products/{id} */
+  function hwj_loadDetail() {
+    var id = hwj_getId();
+
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 15000);   // 15秒超时
+
+    fetch('https://dummyjson.com/products/' + encodeURIComponent(id), { signal: ctrl.signal })
+      .then(function (resp) {
+        clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return resp.json();
+      })
+      .then(function (p) {
+        document.getElementById('hwj_status').style.display = 'none';
+        document.getElementById('hwj_card').style.display = 'flex';
+        document.title = p.title + ' — 商品详情';
+
+        /* 图片组：images 数组（为空时退回 thumbnail） */
+        var imgs = (p.images && p.images.length) ? p.images : [p.thumbnail];
+        document.getElementById('hwj_mainImg').src = imgs[0];
+        document.getElementById('hwj_thumbs').innerHTML = imgs.map(function (src, i) {
+          return '<img src="' + hwj_esc(src) + '" class="' + (i === 0 ? 'hwj_on' : '') + '" ' +
+                 'onclick="hwj_switchImg(this.src, this)" alt="缩略图' + (i + 1) + '">';
+        }).join('');
+
+        /* 文本信息 */
+        document.getElementById('hwj_title').textContent    = p.title;
+        document.getElementById('hwj_brand').textContent    = p.brand || '—';
+        document.getElementById('hwj_category').textContent = p.category;
+        document.getElementById('hwj_pid').textContent      = p.id;
+
+        var origPrice = (p.price / (1 - p.discountPercentage / 100)).toFixed(2);
+        document.getElementById('hwj_price').textContent    = p.price.toFixed(2);
+        document.getElementById('hwj_origin').textContent   = '$' + origPrice;
+        document.getElementById('hwj_discount').textContent = '↓ ' + p.discountPercentage.toFixed(2) + '% OFF';
+
+        document.getElementById('hwj_rating').textContent = p.rating.toFixed(2) + ' / 5';
+        document.getElementById('hwj_stock').textContent  = p.stock + ' 件';
+        document.getElementById('hwj_availability').textContent =
+          p.stock > 10 ? '✓ 现货充足' : (p.stock > 0 ? '⚠ 库存紧张' : '✗ 暂时缺货');
+
+        document.getElementById('hwj_tags').innerHTML =
+          (p.tags || []).map(function (t) { return '<span>' + hwj_esc(t) + '</span>'; }).join('');
+
+        document.getElementById('hwj_desc').textContent = p.description;
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        var msg = (err.name === 'AbortError') ? '请求超时（15秒），请检查是否已开启代理' : err.message;
+        document.getElementById('hwj_status').textContent =
+          '✗ 加载失败：' + msg + '（请检查网络后刷新重试）';
+        document.getElementById('hwj_status').style.color = '#dc2626';
+      });
+  }
+
+  hwj_loadDetail();
+</script>
+
+</body>
+</html>

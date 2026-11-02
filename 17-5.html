@@ -1,0 +1,217 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-02
+  功能名称：JavaScript 两种定时器展示（setTimeout 一次性 / setInterval 循环）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-5 JavaScript 两种定时器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 20px; margin-bottom: 18px; }
+  .hwj_card h2 { font-size: 17px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+
+  /* 对比表 */
+  .hwj_table { width: 100%; border-collapse: collapse; }
+  .hwj_table th, .hwj_table td { border: 1px solid #e5e7eb; padding: 9px 14px; text-align: left; }
+  .hwj_table th { background: #f9fafb; }
+  .hwj_table code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+
+  .hwj_demo { display: flex; gap: 24px; align-items: flex-start; }
+  .hwj_left { flex: 1; min-width: 0; }
+  .hwj_btn {
+    padding: 9px 22px; margin: 0 10px 10px 0;
+    background: #2563eb; color: #fff; border: 0; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .hwj_btn:hover { background: #1d4ed8; }
+  .hwj_btn.hwj_warn { background: #dc2626; }
+  .hwj_btn.hwj_warn:hover { background: #b91c1c; }
+  .hwj_btn.hwj_ghost { background: #fff; color: #2563eb; border: 1px solid #2563eb; }
+  .hwj_btn:disabled { background: #93c5fd; cursor: not-allowed; }
+  .hwj_btn.hwj_ghost:disabled { color: #93c5fd; border-color: #93c5fd; }
+
+  .hwj_screen {
+    margin-top: 12px; padding: 14px 16px;
+    background: #0f172a; border-radius: 8px;
+    color: #4ade80; font-family: Consolas, monospace; font-size: 14px; line-height: 1.9;
+    min-height: 96px; white-space: pre-wrap;
+  }
+  .hwj_screen .hwj_big { font-size: 26px; color: #7dd3fc; font-weight: bold; }
+  .hwj_screen .hwj_dim { color: #64748b; }
+  .hwj_screen .hwj_red { color: #f87171; }
+  .hwj_screen .hwj_yellow { color: #facc15; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>JavaScript 两种定时器</h1>
+    <p><code>setTimeout</code>（一次性定时器）与 <code>setInterval</code>（循环定时器），通过 <code>clearTimeout</code> / <code>clearInterval</code> 取消</p>
+  </div>
+
+  <!-- ① 对比表 -->
+  <div class="hwj_card">
+    <h2>① 两种定时器对比</h2>
+    <table class="hwj_table">
+      <tr><th></th><th>setTimeout 一次性</th><th>setInterval 循环</th></tr>
+      <tr><td>触发次数</td><td>延迟指定毫秒后触发 <b>1 次</b></td><td>每隔指定毫秒触发，<b>无限次</b></td></tr>
+      <tr><td>语法</td><td><code>var id = setTimeout(fn, 毫秒)</code></td><td><code>var id = setInterval(fn, 毫秒)</code></td></tr>
+      <tr><td>取消方法</td><td><code>clearTimeout(id)</code></td><td><code>clearInterval(id)</code></td></tr>
+      <tr><td>返回值</td><td colspan="2">定时器编号 id（数字），用于取消定时</td></tr>
+      <tr><td>典型场景</td><td>延迟提示、广告弹窗、防抖</td><td>秒表、轮播图自动播放、实时时钟</td></tr>
+    </table>
+  </div>
+
+  <!-- ② setTimeout 演示 -->
+  <div class="hwj_card">
+    <h2>② setTimeout：3 秒后触发一次提醒（可取消）</h2>
+    <div class="hwj_demo">
+      <div class="hwj_left">
+        <button class="hwj_btn" id="hwj_startOnce" onclick="hwj_startOnce()">启动 3 秒提醒</button>
+        <button class="hwj_btn hwj_warn" id="hwj_cancelOnce" onclick="hwj_cancelOnce()" disabled>取消提醒 (clearTimeout)</button>
+        <div class="hwj_screen" id="hwj_screen1"><span class="hwj_dim">点击"启动 3 秒提醒"开始演示…</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ setInterval 演示：秒表 -->
+  <div class="hwj_card">
+    <h2>③ setInterval：秒表计数（每 100 毫秒 +0.1 秒）</h2>
+    <div class="hwj_demo">
+      <div class="hwj_left">
+        <button class="hwj_btn" id="hwj_startSw" onclick="hwj_startSw()">开始 (setInterval)</button>
+        <button class="hwj_btn hwj_warn" id="hwj_stopSw" onclick="hwj_stopSw()" disabled>停止 (clearInterval)</button>
+        <button class="hwj_btn hwj_ghost" onclick="hwj_resetSw()">归零</button>
+        <div class="hwj_screen" id="hwj_screen2"><span class="hwj_big">0.0</span> 秒<span class="hwj_dim">\n点击"开始"启动循环定时器…</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ setInterval 演示：实时时钟 -->
+  <div class="hwj_card">
+    <h2>④ setInterval：实时时钟（每秒刷新）</h2>
+    <div class="hwj_demo">
+      <div class="hwj_left">
+        <button class="hwj_btn" id="hwj_startClock" onclick="hwj_startClock()">开启时钟</button>
+        <button class="hwj_btn hwj_warn" id="hwj_stopClock" onclick="hwj_stopClock()" disabled>关闭时钟</button>
+        <div class="hwj_screen" id="hwj_screen3"><span class="hwj_dim">时钟未开启，点击"开启时钟"…</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ========== ② setTimeout 一次性定时器 ========== */
+  var hwj_onceId = null;
+
+  function hwj_startOnce() {
+    if (hwj_onceId !== null) return;             // 防止重复启动
+    hwj_onceId = setTimeout(function () {
+      document.getElementById('hwj_screen1').innerHTML =
+        '<span class="hwj_yellow">🔔 时间到！3 秒延迟的提醒已触发（只触发这一次）</span>';
+      hwj_onceId = null;                          // 已触发，清空编号
+      document.getElementById('hwj_startOnce').disabled = false;
+      document.getElementById('hwj_cancelOnce').disabled = true;
+    }, 3000);
+
+    document.getElementById('hwj_screen1').innerHTML =
+      '<span class="hwj_dim">⏳ 定时器已启动，编号 setTimeout id = </span>' + hwj_onceId +
+      '\n<span class="hwj_dim">3 秒后自动触发；点击红色按钮可提前取消…</span>';
+    document.getElementById('hwj_startOnce').disabled = true;
+    document.getElementById('hwj_cancelOnce').disabled = false;
+  }
+
+  function hwj_cancelOnce() {
+    if (hwj_onceId === null) return;
+    clearTimeout(hwj_onceId);                    // 取消一次性定时器
+    hwj_onceId = null;
+    document.getElementById('hwj_screen1').innerHTML =
+      '<span class="hwj_red">✗ 已调用 clearTimeout(' + '定时器) ，提醒被取消，永远不会触发了</span>';
+    document.getElementById('hwj_startOnce').disabled = false;
+    document.getElementById('hwj_cancelOnce').disabled = true;
+  }
+
+  /* ========== ③ setInterval 循环定时器：秒表 ========== */
+  var hwj_swId = null;
+  var hwj_swCount = 0;
+
+  function hwj_startSw() {
+    if (hwj_swId !== null) return;
+    hwj_swId = setInterval(function () {
+      hwj_swCount++;
+      document.getElementById('hwj_screen2').innerHTML =
+        '<span class="hwj_big">' + (hwj_swCount / 10).toFixed(1) + '</span> 秒' +
+        '\n<span class="hwj_dim">setInterval id = ' + hwj_swId + '，每 100 毫秒执行一次，共执行 ' + hwj_swCount + ' 次</span>';
+    }, 100);
+    document.getElementById('hwj_startSw').disabled = true;
+    document.getElementById('hwj_stopSw').disabled = false;
+  }
+
+  function hwj_stopSw() {
+    if (hwj_swId === null) return;
+    clearInterval(hwj_swId);                     // 停止循环定时器
+    hwj_swId = null;
+    document.getElementById('hwj_screen2').innerHTML =
+      '<span class="hwj_big">' + (hwj_swCount / 10).toFixed(1) + '</span> 秒' +
+      '\n<span class="hwj_red">已调用 clearInterval，定时器停止（共执行 ' + hwj_swCount + ' 次）</span>';
+    document.getElementById('hwj_startSw').disabled = false;
+    document.getElementById('hwj_stopSw').disabled = true;
+  }
+
+  function hwj_resetSw() {
+    hwj_stopSw();                                // 归零前先停止
+    hwj_swCount = 0;
+    document.getElementById('hwj_screen2').innerHTML =
+      '<span class="hwj_big">0.0</span> 秒<span class="hwj_dim">\n已归零，点击"开始"重新计时…</span>';
+  }
+
+  /* ========== ④ setInterval 循环定时器：实时时钟 ========== */
+  var hwj_clockId = null;
+
+  function hwj_pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function hwj_startClock() {
+    if (hwj_clockId !== null) return;
+    function tick() {
+      var d = new Date();
+      document.getElementById('hwj_screen3').innerHTML =
+        '<span class="hwj_big">' + hwj_pad(d.getHours()) + ':' + hwj_pad(d.getMinutes()) + ':' + hwj_pad(d.getSeconds()) + '</span>' +
+        '\n<span class="hwj_dim">' + d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日 · setInterval id = ' + hwj_clockId + '</span>';
+    }
+    tick();                                      // 先立刻显示一次
+    hwj_clockId = setInterval(tick, 1000);       // 再每秒刷新
+    document.getElementById('hwj_startClock').disabled = true;
+    document.getElementById('hwj_stopClock').disabled = false;
+  }
+
+  function hwj_stopClock() {
+    if (hwj_clockId === null) return;
+    clearInterval(hwj_clockId);
+    hwj_clockId = null;
+    document.getElementById('hwj_screen3').innerHTML =
+      '<span class="hwj_red">时钟已关闭（clearInterval）</span>';
+    document.getElementById('hwj_startClock').disabled = false;
+    document.getElementById('hwj_stopClock').disabled = true;
+  }
+</script>
+
+</body>
+</html>
