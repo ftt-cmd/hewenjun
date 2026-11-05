@@ -1,0 +1,170 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：基于 mermaid 的智能客服系统 — 业务流程图 + 数据库 ER 图
+  mermaid.min.js 已本地化到 ./cdn/，离线可渲染
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-5 Mermaid — 智能客服系统流程图与 ER 图</title>
+<script src="./cdn/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1080px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_sec { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px 20px 12px; margin-bottom: 20px; }
+  .hwj_sec h2 { font-size: 17px; margin-bottom: 4px; }
+  .hwj_sec h2 .hwj_en { color: #94a3b8; font-size: 12px; font-weight: normal; margin-left: 8px; }
+  .hwj_sec .hwj_desc { color: #777; font-size: 13px; margin-bottom: 12px; }
+  .hwj_diagram { background: #fdfdfd; border: 1px dashed #d4d4d8; border-radius: 8px; padding: 10px; overflow-x: auto; text-align: center; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>Mermaid — 智能客服系统流程图与 ER 图</h1>
+    <p>使用 <code>mermaid</code> 的 <code>flowchart</code>（业务流程）与 <code>erDiagram</code>（数据库实体关系）两种图型，文本即图表，脚本本地化于 <code>./cdn/</code></p>
+  </div>
+
+  <!-- ① 智能客服业务流程图 -->
+  <div class="hwj_sec">
+    <h2>① 智能客服业务流程图 <span class="hwj_en">flowchart TD</span></h2>
+    <div class="hwj_desc">用户提问 → 预处理 → 意图识别 → 置信度分流：命中知识库直接作答并满意度回访，未命中则多轮澄清后转人工并生成工单</div>
+    <div class="hwj_diagram">
+<pre class="mermaid">
+flowchart TD
+    A[用户发起咨询] --> B[输入预处理<br/>去噪 / 分词 / 脱敏]
+    B --> C[意图识别 NLU<br/>分类 + 实体抽取]
+    C --> D{"置信度 ≥ 0.85 ?"}
+    D -- 是 --> E[知识库检索<br/>向量匹配 Top-K]
+    E --> F[答案组装与润色]
+    F --> G{"内容安全审核<br/>通过 ?"}
+    G -- 是 --> H[回复用户]
+    H --> I[满意度评价收集]
+    I -- 满意 --> J[(会话归档入库)]
+    I -- 不满意 --> K
+    D -- 否 --> K[多轮澄清追问]
+    K --> L{"澄清后命中 ?"}
+    L -- 是 --> E
+    L -- 否 --> M[转接人工坐席]
+    M --> N[生成服务工单]
+    N --> O[人工处理并回复]
+    O --> J
+    G -- 否 --> P[拦截并提示换一种问法]
+    P --> B
+
+    style A fill:#dbeafe,stroke:#2563eb
+    style H fill:#dcfce7,stroke:#16a34a
+    style M fill:#fee2e2,stroke:#dc2626
+    style J fill:#fef9c3,stroke:#ca8a04
+</pre>
+    </div>
+  </div>
+
+  <!-- ② 智能客服数据库 ER 图 -->
+  <div class="hwj_sec">
+    <h2>② 智能客服数据库 ER 图 <span class="hwj_en">erDiagram</span></h2>
+    <div class="hwj_desc">用户 → 会话 → 消息 的核心链路；知识分类 → 知识条目 支撑检索；会话可升级生成 工单，由 坐席 处理</div>
+    <div class="hwj_diagram">
+<pre class="mermaid">
+erDiagram
+    USER ||--o{ SESSION : starts
+    SESSION ||--o{ MESSAGE : contains
+    SESSION ||--o| TICKET : escalates
+    AGENT ||--o{ TICKET : handles
+    CATEGORY ||--o{ KB_ENTRY : groups
+    KB_ENTRY ||--o{ MESSAGE : answers
+    USER {
+        bigint user_id PK "用户ID"
+        varchar nickname "昵称"
+        varchar phone "手机号"
+        datetime created_at "注册时间"
+    }
+    SESSION {
+        bigint session_id PK "会话ID"
+        bigint user_id FK "所属用户"
+        varchar channel "来源渠道"
+        tinyint status "0进行中1已结束"
+        datetime started_at "开始时间"
+    }
+    MESSAGE {
+        bigint msg_id PK "消息ID"
+        bigint session_id FK "所属会话"
+        bigint kb_id FK "命中的知识条目"
+        tinyint role "0用户1机器人2坐席"
+        text content "消息内容"
+        tinyint satisfaction "满意度-1未评0-5分"
+    }
+    KB_ENTRY {
+        bigint kb_id PK "知识条目ID"
+        bigint category_id FK "所属分类"
+        varchar title "标准问题"
+        text answer "标准答案"
+        int hit_count "命中次数"
+    }
+    CATEGORY {
+        bigint category_id PK "分类ID"
+        varchar name "分类名称"
+    }
+    TICKET {
+        bigint ticket_id PK "工单ID"
+        bigint session_id FK "来源会话"
+        bigint agent_id FK "受理坐席"
+        tinyint status "0待处理1处理中2已完成"
+        varchar summary "问题摘要"
+    }
+    AGENT {
+        bigint agent_id PK "坐席ID"
+        varchar name "坐席姓名"
+        tinyint online "是否在线"
+    }
+</pre>
+    </div>
+  </div>
+
+  <div class="hwj_card">
+    <h2>实现说明</h2>
+    <p>① <b>mermaid</b>：使用 JS 语法描述图表（图表即代码），页面引入本地化的 <code>mermaid.min.js</code> 后调用 <code>mermaid.initialize({ startOnLoad: true })</code>，自动把 <code>&lt;pre class="mermaid"&gt;</code> 内文本渲染为 SVG。</p>
+    <p>② <b>flowchart</b>：<code>TD</code> 自上而下布局，节点用 <code>[]</code>（处理）、<code>{}</code>（判定）、<code>[()]</code>（数据库）、<code>(())</code> 等形状区分语义，<code>--&gt;</code> 连线并支持 <code>|标签|</code> 分支文字，<code>style</code> 自定义高亮配色。</p>
+    <p>③ <b>erDiagram</b>：<code>||--o{</code> 等乌鸦脚标记表达 一对一 / 一对多 关系，实体块内声明 <code>类型 名称 PK/FK "注释"</code>，自动布局生成实体关系图。</p>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: '"Microsoft YaHei", sans-serif',
+      fontSize: '14px',
+      primaryColor: '#eef2ff',
+      primaryBorderColor: '#6366f1',
+      lineColor: '#64748b'
+    },
+    flowchart: { curve: 'basis', useMaxWidth: true },
+    er: { useMaxWidth: true }
+  });
+</script>
+
+</body>
+</html>

@@ -186,3 +186,23 @@
 时间: 2026-11-02-13-20
 模型: GLM-5.3-FlashX (MainAgent)
 提示词: 完成17-6.html，使用promise和async完成异步操作的演示包饺子的流程。先买原料（线上线下同时购买，完成任何一个即可进行下一步），取原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子煮饺子，然后吃饺子。使用setTimeout模拟每一个流程，如买原料6s。在页面上显示流程
+
+---
+时间: 2026-11-05-10-10
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 完成18-1.html和18-2.html，第一个显示canvas动画，包括文字何汶军，第二个显示基于canvas的全站系统的系统架构图（电商系统）
+
+---
+时间: 2026-11-05-11-30
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 2、完成18-3.html，其中包括基于知识库智能客服的系统的系统架构图，图的格式为svg，科研方向
+
+---
+时间: 2026-11-05-14-20
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 实现18-4.html，其中包括echarts的两个图，两个图参考官方示例globe-moon和scatterGL-gps，cdn文件下载到cdn目录下（后补充：用户提供了官方参考代码，要求还原——月球图用realistic+SSAO+starfield+pisa.hdr；GPS图用geo世界地图+scatterGL lighter混合+分块.bin加载约97万真实点位）
+
+---
+时间: 2026-11-05-15-10
+模型: GLM-5.3-FlashX (MainAgent)
+提示词: 1、实现 18-5.html，实现基于 mermaid 的智能客服系统的流程图和 er 图，cdn 文件下载到 cdn 目录下。2、实现 18-6.html，实现基于 three.js 的两个图表，cdn 文件下载到 cdn 目录下。3、实现 18-7.html，实现基于 three.js 或 echarts 的数据大屏，大屏要求：三列，中间上面是某种地理信息的图，cdn 文件下载到 cdn 目录下。

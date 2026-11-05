@@ -1,0 +1,262 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：基于 Canvas 的电商系统全站架构图（分层绘制 + 数据流动画 + 悬停高亮）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-2 Canvas 电商系统架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1060px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+
+  .hwj_stage {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+  }
+  .hwj_stage canvas { display: block; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-top: 18px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>基于 Canvas 的电商系统全站架构图</h1>
+    <p>纯 <b>Canvas 2D</b> 绘制：六层架构、请求/响应<b>数据流动画</b>（虚线流动 + 流光粒子），鼠标悬停模块可高亮。</p>
+  </div>
+
+  <div class="hwj_stage">
+    <canvas id="hwj_canvas" width="1060" height="640"></canvas>
+  </div>
+
+  <div class="hwj_card">
+    <h2>架构说明</h2>
+    <p>① <b>用户层 → 接入层</b>：请求经 CDN、负载均衡、API 网关进入系统；② <b>业务服务层</b>：用户 / 商品 / 订单 / 支付 / 库存 / 搜索六大微服务；③ <b>中间件层</b>：Redis 缓存、消息队列削峰、ES 搜索；④ <b>数据层</b>：MySQL 主从、MongoDB、OSS；⑤ <b>基础设施</b>：Docker 容器集群与监控告警兜底。</p>
+    <p>动画原理：<code>ctx.setLineDash + lineDashOffset</code> 让虚线流动表示请求链路，<code>requestAnimationFrame</code> 驱动流光粒子沿连线往返。</p>
+  </div>
+</div>
+
+<script>
+  var hwj_canvas = document.getElementById('hwj_canvas');
+  var hwj_ctx = hwj_canvas.getContext('2d');
+  var hwj_W = hwj_canvas.width, hwj_H = hwj_canvas.height;
+
+  /* ================= 架构数据 ================= */
+  var hwj_layers = [
+    { name: '用户层',   color: '#3b82f6', bg: '#eff6ff',
+      boxes: [ ['PC 浏览器', 'Web 商城前台'], ['移动 App', 'iOS / Android'], ['微信小程序', '轻量入口'] ] },
+    { name: '接入层',   color: '#8b5cf6', bg: '#f5f3ff',
+      boxes: [ ['CDN 加速', '静态资源分发'], ['Nginx 负载均衡', '流量分发 / 高可用'], ['API 网关', '鉴权 · 限流 · 路由'] ] },
+    { name: '业务服务层', color: '#10b981', bg: '#ecfdf5',
+      boxes: [ ['用户服务', '注册登录'], ['商品服务', '商品 / 分类'], ['订单服务', '下单 / 履约'], ['支付服务', '微信 / 支付宝'], ['库存服务', '扣减 / 回补'], ['搜索服务', '商品检索'] ] },
+    { name: '中间件层', color: '#f59e0b', bg: '#fffbeb',
+      boxes: [ ['Redis 缓存', '热点数据 / 秒杀'], ['RabbitMQ', '异步 / 削峰填谷'], ['Elasticsearch', '全文检索引擎'] ] },
+    { name: '数据层',   color: '#ef4444', bg: '#fef2f2',
+      boxes: [ ['MySQL 主从', '核心交易数据'], ['MongoDB', '日志 / 评论'], ['OSS 对象存储', '图片 / 视频文件'] ] },
+    { name: '基础设施', color: '#64748b', bg: '#f8fafc',
+      boxes: [ ['Docker 容器集群', '服务编排部署'], ['云服务器 ECS', '弹性计算资源'], ['监控告警', 'Prometheus'] ] }
+  ];
+
+  /* 布局常量 */
+  var hwj_TOP = 78;          // 架构区顶部
+  var hwj_ROW_H = 74;        // 每层高度
+  var hwj_GAP = 16;          // 层间距
+  var hwj_LEFT = 108;        // 左侧标签宽
+  var hwj_RIGHT = 30;        // 右侧留白
+  var hwj_boxes = [];        // 所有盒子（用于悬停检测）
+
+  /* 工具：圆角矩形 */
+  function hwj_rrect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  /* 计算布局：返回每层的 y 与每层的盒子坐标 */
+  function hwj_layout() {
+    var usableW = hwj_W - hwj_LEFT - hwj_RIGHT;
+    hwj_layers.forEach(function (layer, li) {
+      layer.y = hwj_TOP + li * (hwj_ROW_H + hwj_GAP);
+      var n = layer.boxes.length;
+      var boxGap = 12;
+      var boxW = (usableW - (n - 1) * boxGap) / n;
+      layer.boxW = boxW;
+      layer.boxes.forEach(function (b, bi) {
+        var bx = hwj_LEFT + bi * (boxW + boxGap);
+        hwj_boxes.push({
+          x: bx, y: layer.y, w: boxW, h: hwj_ROW_H,
+          title: b[0], desc: b[1], color: layer.color, bg: layer.bg
+        });
+      });
+    });
+  }
+
+  /* ================= 绘制 ================= */
+  var hwj_hover = -1;        // 悬停的盒子索引
+  var hwj_dash = 0;          // 虚线偏移（流动感）
+  var hwj_flow = 0;          // 流光粒子进度 0~1
+
+  function hwj_draw() {
+    hwj_ctx.clearRect(0, 0, hwj_W, hwj_H);
+
+    /* 背景 */
+    hwj_ctx.fillStyle = '#ffffff';
+    hwj_ctx.fillRect(0, 0, hwj_W, hwj_H);
+
+    /* 标题 */
+    hwj_ctx.textAlign = 'center';
+    hwj_ctx.textBaseline = 'middle';
+    hwj_ctx.fillStyle = '#0f172a';
+    hwj_ctx.font = 'bold 24px "Microsoft YaHei"';
+    hwj_ctx.fillText('电商系统全站架构图', hwj_W / 2, 34);
+    hwj_ctx.fillStyle = '#94a3b8';
+    hwj_ctx.font = '13px "Microsoft YaHei"';
+    hwj_ctx.fillText('绘制：袁磊 · Canvas 2D · 请求 ▼  响应 ▲', hwj_W / 2, 58);
+
+    var usableW = hwj_W - hwj_LEFT - hwj_RIGHT;
+
+    /* 层间连线（请求向下 / 响应向上，虚线流动） */
+    for (var li = 0; li < hwj_layers.length - 1; li++) {
+      var y1 = hwj_TOP + li * (hwj_ROW_H + hwj_GAP) + hwj_ROW_H;
+      var y2 = y1 + hwj_GAP;
+      [0.28, 0.5, 0.72].forEach(function (fx, fi) {
+        var x = hwj_LEFT + usableW * fx;
+        hwj_ctx.save();
+        hwj_ctx.strokeStyle = fi === 1 ? 'rgba(37, 99, 235, .55)' : 'rgba(148, 163, 184, .5)';
+        hwj_ctx.lineWidth = fi === 1 ? 2 : 1.2;
+        hwj_ctx.setLineDash([6, 6]);
+        hwj_ctx.lineDashOffset = -hwj_dash;           // 负偏移 → 虚线向下流动
+        hwj_ctx.beginPath();
+        hwj_ctx.moveTo(x, y1 + 2);
+        hwj_ctx.lineTo(x, y2 - 2);
+        hwj_ctx.stroke();
+        /* 箭头 */
+        hwj_ctx.setLineDash([]);
+        hwj_ctx.fillStyle = fi === 1 ? 'rgba(37, 99, 235, .7)' : 'rgba(148, 163, 184, .7)';
+        hwj_ctx.beginPath();
+        hwj_ctx.moveTo(x - 4, y2 - 6);
+        hwj_ctx.lineTo(x + 4, y2 - 6);
+        hwj_ctx.lineTo(x, y2 - 1);
+        hwj_ctx.closePath();
+        hwj_ctx.fill();
+        hwj_ctx.restore();
+      });
+    }
+
+    /* 流光粒子：沿中间主链路往返 */
+    var flowX = hwj_LEFT + usableW / 2;
+    var topY = hwj_TOP + 4, botY = hwj_TOP + 5 * (hwj_ROW_H + hwj_GAP) + hwj_ROW_H - 4;
+    var fy = topY + (botY - topY) * hwj_flow;
+    var grad = hwj_ctx.createRadialGradient(flowX, fy, 0, flowX, fy, 14);
+    grad.addColorStop(0, 'rgba(37, 99, 235, .9)');
+    grad.addColorStop(1, 'rgba(37, 99, 235, 0)');
+    hwj_ctx.fillStyle = grad;
+    hwj_ctx.beginPath();
+    hwj_ctx.arc(flowX, fy, 14, 0, Math.PI * 2);
+    hwj_ctx.fill();
+
+    /* 各层左侧竖排标签 */
+    hwj_layers.forEach(function (layer) {
+      var cy = layer.y + hwj_ROW_H / 2;
+      hwj_ctx.save();
+      hwj_ctx.fillStyle = layer.color;
+      hwj_rrect(hwj_ctx, 14, layer.y + 8, 80, hwj_ROW_H - 16, 8);
+      hwj_ctx.fill();
+      hwj_ctx.fillStyle = '#fff';
+      hwj_ctx.font = 'bold 14px "Microsoft YaHei"';
+      hwj_ctx.fillText(layer.name, 54, cy);
+      hwj_ctx.restore();
+    });
+
+    /* 盒子 */
+    hwj_boxes.forEach(function (b, i) {
+      var hovered = (i === hwj_hover);
+      hwj_ctx.save();
+      if (hovered) {
+        hwj_ctx.shadowColor = b.color;
+        hwj_ctx.shadowBlur = 16;
+      }
+      hwj_ctx.fillStyle = b.bg;
+      hwj_rrect(hwj_ctx, b.x, b.y, b.w, b.h, 8);
+      hwj_ctx.fill();
+      hwj_ctx.restore();
+
+      hwj_ctx.strokeStyle = hovered ? b.color : b.color + '99';
+      hwj_ctx.lineWidth = hovered ? 2 : 1;
+      hwj_rrect(hwj_ctx, b.x, b.y, b.w, b.h, 8);
+      hwj_ctx.stroke();
+
+      /* 左侧色条 */
+      hwj_ctx.fillStyle = b.color;
+      hwj_rrect(hwj_ctx, b.x + 6, b.y + 10, 4, b.h - 20, 2);
+      hwj_ctx.fill();
+
+      /* 文本 */
+      hwj_ctx.fillStyle = '#1e293b';
+      hwj_ctx.font = 'bold 14px "Microsoft YaHei"';
+      hwj_ctx.fillText(b.title, b.x + b.w / 2, b.y + b.h / 2 - 8);
+      hwj_ctx.fillStyle = '#94a3b8';
+      hwj_ctx.font = '11px "Microsoft YaHei"';
+      hwj_ctx.fillText(b.desc, b.x + b.w / 2, b.y + b.h / 2 + 13);
+    });
+
+    /* 底部说明 */
+    hwj_ctx.fillStyle = '#cbd5e1';
+    hwj_ctx.font = '12px "Microsoft YaHei"';
+    hwj_ctx.fillText('— 鼠标悬停模块可高亮 · 18-2 · 高级网页设计 —', hwj_W / 2, hwj_H - 16);
+  }
+
+  /* ================= 动画循环 ================= */
+  function hwj_tick() {
+    hwj_dash = (hwj_dash + 0.6) % 12;
+    hwj_flow = (hwj_flow + 0.004) % 1;
+    hwj_draw();
+    requestAnimationFrame(hwj_tick);
+  }
+
+  /* 悬停检测 */
+  hwj_canvas.addEventListener('mousemove', function (e) {
+    var rect = hwj_canvas.getBoundingClientRect();
+    var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    hwj_hover = -1;
+    for (var i = 0; i < hwj_boxes.length; i++) {
+      var b = hwj_boxes[i];
+      if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+        hwj_hover = i;
+        break;
+      }
+    }
+    hwj_canvas.style.cursor = hwj_hover >= 0 ? 'pointer' : 'default';
+  });
+
+  hwj_layout();
+  hwj_tick();
+</script>
+
+</body>
+</html>

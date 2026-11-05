@@ -1,0 +1,216 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：ECharts GL 双图 — ① 月球 3D（globe-moon）② 百万级 GPS 散点（scatterGL-gps）
+  严格按官方示例配置实现；echarts / echarts-gl / 贴图 / world 地图 / GPS 数据均已本地化到 ./cdn/
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-4 ECharts GL — 月球 3D 与百万级 GPS 散点</title>
+<script src="./cdn/echarts.min.js"></script>
+<script src="./cdn/echarts-gl.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_sec { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 18px 8px; margin-bottom: 20px; }
+  .hwj_sec h2 { font-size: 17px; margin-bottom: 4px; }
+  .hwj_sec h2 .hwj_en { color: #94a3b8; font-size: 12px; font-weight: normal; margin-left: 8px; }
+  .hwj_sec .hwj_desc { color: #777; font-size: 13px; margin-bottom: 10px; }
+  .hwj_chart { width: 100%; height: 560px; background: #000; border-radius: 8px; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-top: 4px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>ECharts GL — 月球 3D 与百万级 GPS 散点</h1>
+    <p>严格按官方示例 <code>globe-moon</code> 与 <code>scatterGL-gps</code> 配置实现；echarts / echarts-gl / 贴图 / world 地图 / GPS 数据全部本地化到 <code>./cdn/</code>，离线可运行（需 WebGL）</p>
+  </div>
+
+  <!-- ① 月球 3D -->
+  <div class="hwj_sec">
+    <h2>① 月球 3D <span class="hwj_en">globe-moon</span></h2>
+    <div class="hwj_desc">月球表面贴图 + bump 高度置换 + realistic PBR 材质 + SSAO 环境光遮蔽 + 星空背景 + pisa.hdr 环境立方体贴图</div>
+    <div class="hwj_chart" id="hwj_moon"></div>
+  </div>
+
+  <!-- ② 百万级 GPS 散点 -->
+  <div class="hwj_sec">
+    <h2>② 百万级 GPS 散点 <span class="hwj_en">scatterGL-gps</span></h2>
+    <div class="hwj_desc" id="hwj_gps_desc">2D 世界地图 + scatterGL 逐块加载 20 个 .bin 数据块（约 100 万真实 GPS 点），blendMode 叠加发光，可缩放平移</div>
+    <div class="hwj_chart" id="hwj_gps"></div>
+  </div>
+
+  <div class="hwj_card">
+    <h2>实现说明</h2>
+    <p>① <b>globe-moon</b>：<code>baseTexture</code> 月面贴图 + <code>heightTexture</code> bump 高度图做 <code>displacement</code> 置换；<code>shading: 'realistic'</code> PBR 材质；<code>postEffect</code> 开启 SSAO 环境光遮蔽；<code>ambientCubemap</code> 加载 pisa.hdr 提供微弱环境反射；星空 <code>environment</code> 背景营造太空感。</p>
+    <p>② <b>scatterGL-gps</b>：<code>geo</code> 世界地图（深色底 <code>#323c48</code>），scatterGL <code>blendMode: 'lighter'</code> 叠加模式让密集点自然发光；数据为官方 OpenStreetMap 车辆 GPS 轨迹 .bin 文件（Int32 经纬度 × 10⁷），分块 XHR 加载 + <code>appendData</code> 流式渲染，GPU 轻松承载百万点。</p>
+    <p>③ 本地化清单：<code>echarts.min.js</code>、<code>echarts-gl.min.js</code>、<code>moon-base/bump.jpg</code>、<code>starfield.jpg</code>、<code>pisa.hdr</code>、<code>world.json</code>、<code>gps/gps_0~19.bin</code>，全部位于 <code>./cdn/</code>。</p>
+    <p>④ 鼠标左键拖拽旋转 / 滚轮缩放 / 右键平移；若空白请确认浏览器已开启 <b>WebGL 硬件加速</b>。</p>
+  </div>
+</div>
+
+<script>
+  /* ============ ① 月球 3D（globe-moon，官方配置） ============ */
+  var hwj_moonChart = echarts.init(document.getElementById('hwj_moon'));
+  hwj_moonChart.setOption({
+    backgroundColor: '#000',
+    globe: {
+      baseTexture: './cdn/moon-base.jpg',
+      heightTexture: './cdn/moon-bump.jpg',            // 高度贴图 → 置换出月面环形山起伏
+      displacementScale: 0.05,
+      displacementQuality: 'medium',
+      environment: './cdn/starfield.jpg',              // 星空背景
+      shading: 'realistic',                            // PBR 物理渲染
+      realisticMaterial: {
+        roughness: 0.8,
+        metalness: 0
+      },
+      postEffect: {
+        enable: true,
+        SSAO: {                                        // 环境光遮蔽，增强环形山立体感
+          enable: true,
+          radius: 2,
+          intensity: 1,
+          quality: 'high'
+        }
+      },
+      temporalSuperSampling: { enable: true },
+      light: {
+        ambient: { intensity: 0 },
+        main: {
+          intensity: 2,
+          shadow: true                                 // 明暗交界线效果
+        },
+        ambientCubemap: {
+          texture: './cdn/pisa.hdr',                   // HDR 环境立方体贴图
+          exposure: 0,
+          diffuseIntensity: 0.02
+        }
+      },
+      viewControl: { autoRotate: false }
+    },
+    series: []
+  });
+
+  /* ============ ② 百万级 GPS 散点（scatterGL-gps，官方配置） ============ */
+  /* 注册 world 地图（本地 world.json） */
+  var hwj_xhrMap = new XMLHttpRequest();
+  hwj_xhrMap.open('GET', './cdn/world.json', true);
+  hwj_xhrMap.onload = function () {
+    echarts.registerMap('world', JSON.parse(this.responseText));
+
+    var hwj_CHUNK_COUNT = 20;                          // 本地化了官方 230 块中的前 20 块
+    var hwj_buffers = [];                              // 各数据块转换后的 Float32Array
+    var hwj_dataCount = 0;
+    var hwj_gpsTip = document.getElementById('hwj_gps_desc');
+
+    /* 分块下载 .bin（Int32 经纬度 × 1e7），全部下载完后初始化图表一次性渲染 */
+    function hwj_loadChunk(idx) {
+      if (idx >= hwj_CHUNK_COUNT) { hwj_renderAll(); return; }
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', './cdn/gps/gps_' + idx + '.bin', true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function () {
+        var rawData = new Int32Array(this.response);
+        var data = new Float32Array(rawData.length);
+        for (var i = 0; i < rawData.length; i += 2) {
+          data[i] = rawData[i + 1] / 1e7;              // 经度
+          data[i + 1] = rawData[i] / 1e7;              // 纬度
+        }
+        hwj_buffers.push(data);
+        hwj_dataCount += rawData.length / 2;
+        hwj_gpsTip.textContent = '正在加载数据块 ' + (idx + 1) + '/' + hwj_CHUNK_COUNT + ' …（已 ' + hwj_dataCount.toLocaleString() + ' 点）';
+        hwj_loadChunk(idx + 1);
+      };
+      xhr.send();
+    }
+
+    /* 合并全部数据块 → 数据就绪后再初始化图表渲染（避免先 init 空图后更新数据导致 GL 层异常） */
+    var hwj_gpsOption = null;
+
+    function hwj_buildGps() {
+      var hwj_gpsChart = echarts.init(document.getElementById('hwj_gps'));
+      hwj_gpsChart.setOption(hwj_gpsOption);
+      return hwj_gpsChart;
+    }
+
+    function hwj_renderAll() {
+      var total = 0;
+      for (var i = 0; i < hwj_buffers.length; i++) { total += hwj_buffers[i].length; }
+      var merged = new Float32Array(total);
+      var offset = 0;
+      for (var j = 0; j < hwj_buffers.length; j++) {
+        merged.set(hwj_buffers[j], offset);
+        offset += hwj_buffers[j].length;
+      }
+      hwj_gpsOption = {
+        backgroundColor: '#000',
+        title: {
+          text: hwj_dataCount.toLocaleString() + ' GPS Points',
+          left: 'center',
+          textStyle: { color: '#fff' }
+        },
+        geo: {
+          map: 'world',
+          roam: true,                                  // 缩放 / 平移
+          silent: true,
+          itemStyle: {
+            areaColor: '#323c48',
+            borderColor: '#111'
+          },
+          emphasis: { disabled: true }
+        },
+        series: [{
+          name: 'GPS',
+          type: 'scatterGL',
+          coordinateSystem: 'geo',
+          symbolSize: 2,
+          blendMode: 'lighter',                        // 叠加发光
+          itemStyle: { color: '#463208' },             // 暗金色(=rgb70,50,8) + lighter 混合 → 密集处发亮（GL系列需用十六进制颜色）
+          silent: true,
+          dimensions: ['lng', 'lat'],
+          data: merged
+        }]
+      };
+      hwj_buildGps();
+
+      hwj_gpsTip.textContent = '2D 世界地图 + scatterGL 渲染 ' + hwj_dataCount.toLocaleString() + ' 个真实 GPS 点（OpenStreetMap 车辆轨迹），blendMode 叠加发光，可缩放平移';
+    }
+
+    hwj_loadChunk(0);                                  // 先加载数据，全部到齐后初始化图表一次性渲染
+  };
+  hwj_xhrMap.send();
+
+  /* 自适应窗口 */
+  window.addEventListener('resize', function () {
+    echarts.getInstanceByDom(document.getElementById('hwj_moon')) &&
+      echarts.getInstanceByDom(document.getElementById('hwj_moon')).resize();
+    var gpsDom = document.getElementById('hwj_gps');
+    var gpsInst = echarts.getInstanceByDom(gpsDom);
+    gpsInst && gpsInst.resize();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：基于知识库的智能客服系统架构图（SVG 格式 · 科研方向：NLU / RAG / 评估闭环）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-3 知识库智能客服系统架构图（SVG）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1080px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_stage { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, .12); }
+  .hwj_stage svg { display: block; }
+
+  /* SVG 交互动画 */
+  .hwj_node { cursor: pointer; }
+  .hwj_node .hwj_box { transition: all .2s; }
+  .hwj_node:hover .hwj_box { stroke-width: 2.5; filter: drop-shadow(0 0 6px rgba(37, 99, 235, .55)); }
+
+  @keyframes hwj_dash { to { stroke-dashoffset: -12; } }
+  .hwj_flow { stroke-dasharray: 6 6; animation: hwj_dash .8s linear infinite; }
+  .hwj_loop { stroke-dasharray: 5 5; animation: hwj_dash 1.2s linear infinite reverse; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-top: 18px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+  .hwj_card b.hwj_r { color: #0d9488; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>基于知识库的智能客服系统架构图（SVG）</h1>
+    <p>纯 <b>SVG</b> 绘制 · 科研方向：<code>NLU 语言理解</code> → <code>RAG 知识检索增强</code> → <code>答案生成</code> → <code>评估与持续学习闭环</code> · 鼠标悬停模块可高亮</p>
+  </div>
+
+  <div class="hwj_stage">
+  <svg viewBox="0 0 1040 730" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+    <defs>
+      <marker id="hwj_arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+      </marker>
+      <marker id="hwj_arrowTeal" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#0d9488"/>
+      </marker>
+    </defs>
+
+    <rect x="0" y="0" width="1040" height="730" fill="#ffffff"/>
+
+    <!-- 标题 -->
+    <text x="520" y="36" text-anchor="middle" font-size="24" font-weight="bold" fill="#0f172a">知识库智能客服系统架构图（科研方向）</text>
+    <text x="520" y="60" text-anchor="middle" font-size="13" fill="#94a3b8">绘制：袁磊 · SVG · 请求流 ▼ · 反馈闭环 ⟲</text>
+
+    <!-- ===== 层间数据流（虚线流动） ===== -->
+    <line class="hwj_flow" x1="383" y1="168" x2="383" y2="184" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="578" y1="168" x2="578" y2="184" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="773" y1="168" x2="773" y2="184" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+
+    <line class="hwj_flow" x1="383" y1="270" x2="383" y2="286" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="578" y1="270" x2="578" y2="286" stroke="#2563eb" stroke-width="2" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="773" y1="270" x2="773" y2="286" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+
+    <line class="hwj_flow" x1="383" y1="372" x2="383" y2="388" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="578" y1="372" x2="578" y2="388" stroke="#2563eb" stroke-width="2" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="773" y1="372" x2="773" y2="388" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+
+    <line class="hwj_flow" x1="383" y1="474" x2="383" y2="490" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="578" y1="474" x2="578" y2="490" stroke="#2563eb" stroke-width="2" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="773" y1="474" x2="773" y2="490" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+
+    <line class="hwj_flow" x1="383" y1="576" x2="383" y2="592" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="578" y1="576" x2="578" y2="592" stroke="#2563eb" stroke-width="2" marker-end="url(#hwj_arrow)"/>
+    <line class="hwj_flow" x1="773" y1="576" x2="773" y2="592" stroke="#64748b" stroke-width="1.4" marker-end="url(#hwj_arrow)"/>
+
+    <!-- ===== 反馈闭环（评估层 → 理解/检索层，科研亮点） ===== -->
+    <path class="hwj_loop" d="M 16 640 C 4 560 4 400 16 336" fill="none" stroke="#0d9488" stroke-width="2" marker-end="url(#hwj_arrowTeal)"/>
+    <text x="24" y="500" transform="rotate(-90 24 500)" font-size="12" fill="#0d9488" font-weight="bold">反馈闭环 · 持续学习</text>
+
+    <!-- ===== 层 1：用户层 ===== -->
+    <g>
+      <rect x="34" y="84" width="996" height="84" rx="10" fill="#eff6ff" opacity="0.55" stroke="#bfdbfe"/>
+      <rect x="44" y="96" width="84" height="60" rx="8" fill="#3b82f6"/>
+      <text x="86" y="131" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">用户层</text>
+
+      <g class="hwj_node"><title>PC 端智能问答入口，支持机器人 / 人工切换</title>
+        <rect class="hwj_box" x="136" y="90" width="286" height="72" rx="8" fill="#ffffff" stroke="#3b82f6"/>
+        <rect x="142" y="98" width="4" height="56" rx="2" fill="#3b82f6"/>
+        <text x="279" y="121" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Web 客服窗口</text>
+        <text x="279" y="143" text-anchor="middle" font-size="11" fill="#94a3b8">PC 端咨询入口</text>
+      </g>
+      <g class="hwj_node"><title>移动端智能问答，多渠道统一接入</title>
+        <rect class="hwj_box" x="434" y="90" width="286" height="72" rx="8" fill="#ffffff" stroke="#3b82f6"/>
+        <rect x="440" y="98" width="4" height="56" rx="2" fill="#3b82f6"/>
+        <text x="577" y="121" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">微信 / APP 端</text>
+        <text x="577" y="143" text-anchor="middle" font-size="11" fill="#94a3b8">移动端智能问答</text>
+      </g>
+      <g class="hwj_node"><title>机器人无法解决时转人工并生成工单</title>
+        <rect class="hwj_box" x="732" y="90" width="286" height="72" rx="8" fill="#ffffff" stroke="#3b82f6"/>
+        <rect x="738" y="98" width="4" height="56" rx="2" fill="#3b82f6"/>
+        <text x="875" y="121" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">工单系统</text>
+        <text x="875" y="143" text-anchor="middle" font-size="11" fill="#94a3b8">人工客服协作</text>
+      </g>
+    </g>
+
+    <!-- ===== 层 2：接入层 ===== -->
+    <g>
+      <rect x="34" y="186" width="996" height="84" rx="10" fill="#f5f3ff" opacity="0.55" stroke="#ddd6fe"/>
+      <rect x="44" y="198" width="84" height="60" rx="8" fill="#8b5cf6"/>
+      <text x="86" y="233" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">接入层</text>
+
+      <g class="hwj_node"><title>统一入口：鉴权、限流、路由分发</title>
+        <rect class="hwj_box" x="136" y="192" width="436" height="72" rx="8" fill="#ffffff" stroke="#8b5cf6"/>
+        <rect x="142" y="200" width="4" height="56" rx="2" fill="#8b5cf6"/>
+        <text x="354" y="223" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">API 网关</text>
+        <text x="354" y="245" text-anchor="middle" font-size="11" fill="#94a3b8">鉴权 · 限流 · 路由分发</text>
+      </g>
+      <g class="hwj_node"><title>维护多轮对话上下文，支持指代消解</title>
+        <rect class="hwj_box" x="584" y="192" width="436" height="72" rx="8" fill="#ffffff" stroke="#8b5cf6"/>
+        <rect x="590" y="200" width="4" height="56" rx="2" fill="#8b5cf6"/>
+        <text x="802" y="223" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">会话管理</text>
+        <text x="802" y="245" text-anchor="middle" font-size="11" fill="#94a3b8">多轮对话上下文维护</text>
+      </g>
+    </g>
+
+    <!-- ===== 层 3：语言理解层（科研） ===== -->
+    <g>
+      <rect x="34" y="288" width="996" height="84" rx="10" fill="#ecfdf5" opacity="0.55" stroke="#a7f3d0"/>
+      <rect x="44" y="300" width="84" height="60" rx="8" fill="#10b981"/>
+      <text x="86" y="326" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">语言理解层</text>
+      <text x="86" y="346" text-anchor="middle" font-size="10" fill="#d1fae5">NLU · 科研</text>
+
+      <g class="hwj_node"><title>jieba 分词、去停用词、文本清洗</title>
+        <rect class="hwj_box" x="136" y="294" width="212" height="72" rx="8" fill="#ffffff" stroke="#10b981"/>
+        <rect x="142" y="302" width="4" height="56" rx="2" fill="#10b981"/>
+        <text x="242" y="325" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">分词与预处理</text>
+        <text x="242" y="347" text-anchor="middle" font-size="11" fill="#94a3b8">jieba · 文本清洗</text>
+      </g>
+      <g class="hwj_node"><title>科研点：BERT / TextCNN 文本分类模型识别用户意图</title>
+        <rect class="hwj_box" x="360" y="294" width="212" height="72" rx="8" fill="#ffffff" stroke="#10b981"/>
+        <rect x="366" y="302" width="4" height="56" rx="2" fill="#10b981"/>
+        <text x="466" y="325" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">意图识别</text>
+        <text x="466" y="347" text-anchor="middle" font-size="11" fill="#94a3b8">BERT / TextCNN 分类</text>
+      </g>
+      <g class="hwj_node"><title>科研点：BiLSTM-CRF 序列标注抽取关键实体</title>
+        <rect class="hwj_box" x="584" y="294" width="212" height="72" rx="8" fill="#ffffff" stroke="#10b981"/>
+        <rect x="590" y="302" width="4" height="56" rx="2" fill="#10b981"/>
+        <text x="690" y="325" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">实体识别 NER</text>
+        <text x="690" y="347" text-anchor="middle" font-size="11" fill="#94a3b8">BiLSTM-CRF 标注</text>
+      </g>
+      <g class="hwj_node"><title>识别用户情绪，负面情绪预警并转人工</title>
+        <rect class="hwj_box" x="808" y="294" width="212" height="72" rx="8" fill="#ffffff" stroke="#10b981"/>
+        <rect x="814" y="302" width="4" height="56" rx="2" fill="#10b981"/>
+        <text x="914" y="325" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">情感分析</text>
+        <text x="914" y="347" text-anchor="middle" font-size="11" fill="#94a3b8">情绪预警 · 转人工</text>
+      </g>
+    </g>
+
+    <!-- ===== 层 4：知识检索层（RAG 科研核心） ===== -->
+    <g>
+      <rect x="34" y="390" width="996" height="84" rx="10" fill="#fffbeb" opacity="0.55" stroke="#fde68a"/>
+      <rect x="44" y="402" width="84" height="60" rx="8" fill="#f59e0b"/>
+      <text x="86" y="428" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">知识检索层</text>
+      <text x="86" y="448" text-anchor="middle" font-size="10" fill="#fef3c7">RAG · 核心</text>
+
+      <g class="hwj_node"><title>运营维护的高频问答对语料</title>
+        <rect class="hwj_box" x="136" y="396" width="212" height="72" rx="8" fill="#ffffff" stroke="#f59e0b"/>
+        <rect x="142" y="404" width="4" height="56" rx="2" fill="#f59e0b"/>
+        <text x="242" y="427" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">FAQ 知识库</text>
+        <text x="242" y="449" text-anchor="middle" font-size="11" fill="#94a3b8">高频问答对语料</text>
+      </g>
+      <g class="hwj_node"><title>科研点：Sentence-BERT 将问题编码为语义向量</title>
+        <rect class="hwj_box" x="360" y="396" width="212" height="72" rx="8" fill="#ffffff" stroke="#f59e0b"/>
+        <rect x="366" y="404" width="4" height="56" rx="2" fill="#f59e0b"/>
+        <text x="466" y="427" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Embedding 向量化</text>
+        <text x="466" y="449" text-anchor="middle" font-size="11" fill="#94a3b8">Sentence-BERT 编码</text>
+      </g>
+      <g class="hwj_node"><title>科研点：Milvus 余弦相似度 Top-K 语义检索</title>
+        <rect class="hwj_box" x="584" y="396" width="212" height="72" rx="8" fill="#ffffff" stroke="#f59e0b"/>
+        <rect x="590" y="404" width="4" height="56" rx="2" fill="#f59e0b"/>
+        <text x="690" y="427" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">向量数据库</text>
+        <text x="690" y="449" text-anchor="middle" font-size="11" fill="#94a3b8">Milvus · Top-K 检索</text>
+      </g>
+      <g class="hwj_node"><title>科研点：知识图谱多跳推理补全复杂关联答案</title>
+        <rect class="hwj_box" x="808" y="396" width="212" height="72" rx="8" fill="#ffffff" stroke="#f59e0b"/>
+        <rect x="814" y="404" width="4" height="56" rx="2" fill="#f59e0b"/>
+        <text x="914" y="427" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">知识图谱</text>
+        <text x="914" y="449" text-anchor="middle" font-size="11" fill="#94a3b8">Neo4j · 多跳推理</text>
+      </g>
+    </g>
+
+    <!-- ===== 层 5：答案生成层 ===== -->
+    <g>
+      <rect x="34" y="492" width="996" height="84" rx="10" fill="#fef2f2" opacity="0.55" stroke="#fecaca"/>
+      <rect x="44" y="504" width="84" height="60" rx="8" fill="#ef4444"/>
+      <text x="86" y="539" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">答案生成层</text>
+
+      <g class="hwj_node"><title>将检索到的知识片段拼装进提示词模板</title>
+        <rect class="hwj_box" x="136" y="498" width="286" height="72" rx="8" fill="#ffffff" stroke="#ef4444"/>
+        <rect x="142" y="506" width="4" height="56" rx="2" fill="#ef4444"/>
+        <text x="279" y="529" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Prompt 模板构建</text>
+        <text x="279" y="551" text-anchor="middle" font-size="11" fill="#94a3b8">检索结果拼装</text>
+      </g>
+      <g class="hwj_node"><title>科研点：大语言模型基于检索内容生成可控回答</title>
+        <rect class="hwj_box" x="434" y="498" width="286" height="72" rx="8" fill="#ffffff" stroke="#ef4444"/>
+        <rect x="440" y="506" width="4" height="56" rx="2" fill="#ef4444"/>
+        <text x="577" y="529" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">大语言模型 LLM</text>
+        <text x="577" y="551" text-anchor="middle" font-size="11" fill="#94a3b8">检索增强生成（RAG）</text>
+      </g>
+      <g class="hwj_node"><title>敏感词过滤、格式规范化后返回用户</title>
+        <rect class="hwj_box" x="732" y="498" width="286" height="72" rx="8" fill="#ffffff" stroke="#ef4444"/>
+        <rect x="738" y="506" width="4" height="56" rx="2" fill="#ef4444"/>
+        <text x="875" y="529" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">答案后处理</text>
+        <text x="875" y="551" text-anchor="middle" font-size="11" fill="#94a3b8">敏感词过滤 · 格式化</text>
+      </g>
+    </g>
+
+    <!-- ===== 层 6：评估与优化层（科研闭环） ===== -->
+    <g>
+      <rect x="34" y="594" width="996" height="84" rx="10" fill="#f0fdfa" opacity="0.55" stroke="#99f6e4"/>
+      <rect x="44" y="606" width="84" height="60" rx="8" fill="#0d9488"/>
+      <text x="86" y="632" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">评估优化层</text>
+      <text x="86" y="652" text-anchor="middle" font-size="10" fill="#ccfbf1">科研闭环</text>
+
+      <g class="hwj_node"><title>科研点：在标注测试集上计算 Accuracy / Recall / F1</title>
+        <rect class="hwj_box" x="136" y="600" width="286" height="72" rx="8" fill="#ffffff" stroke="#0d9488"/>
+        <rect x="142" y="608" width="4" height="56" rx="2" fill="#0d9488"/>
+        <text x="279" y="631" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">效果评估</text>
+        <text x="279" y="653" text-anchor="middle" font-size="11" fill="#94a3b8">准确率 · 召回率 · F1 值</text>
+      </g>
+      <g class="hwj_node"><title>人工标注 badcase，扩充高质量语料</title>
+        <rect class="hwj_box" x="434" y="600" width="286" height="72" rx="8" fill="#ffffff" stroke="#0d9488"/>
+        <rect x="440" y="608" width="4" height="56" rx="2" fill="#0d9488"/>
+        <text x="577" y="631" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">人工标注平台</text>
+        <text x="577" y="653" text-anchor="middle" font-size="11" fill="#94a3b8">badcase · 语料建设</text>
+      </g>
+      <g class="hwj_node"><title>科研点：新语料定期微调模型，形成持续学习闭环</title>
+        <rect class="hwj_box" x="732" y="600" width="286" height="72" rx="8" fill="#ffffff" stroke="#0d9488"/>
+        <rect x="738" y="608" width="4" height="56" rx="2" fill="#0d9488"/>
+        <text x="875" y="631" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">模型微调</text>
+        <text x="875" y="653" text-anchor="middle" font-size="11" fill="#94a3b8">持续学习迭代</text>
+      </g>
+    </g>
+
+    <!-- 底部说明 -->
+    <text x="520" y="708" text-anchor="middle" font-size="12" fill="#cbd5e1">— 鼠标悬停模块可高亮并显示说明 · 18-3 · 高级网页设计 —</text>
+  </svg>
+  </div>
+
+  <div class="hwj_card">
+    <h2>科研方向说明</h2>
+    <p>① <b class="hwj_r">自然语言理解（NLU）</b>：意图识别（BERT / TextCNN）、命名实体识别（BiLSTM-CRF）、情感分析，是客服机器人"听懂用户"的基础。</p>
+    <p>② <b class="hwj_r">检索增强生成（RAG）</b>：Sentence-BERT 向量化 + Milvus 相似度检索 + 知识图谱多跳推理，解决大模型幻觉与领域知识不足问题。</p>
+    <p>③ <b class="hwj_r">评估与持续学习闭环</b>：准确率 / 召回率 / F1 量化评估 → 人工标注 badcase → 模型微调迭代，左侧青色箭头即闭环通路。</p>
+    <p>④ 相比 18-2 的 Canvas 绘图，本页使用 <code>SVG</code>：矢量缩放不失真、原生 <code>&lt;title&gt;</code> 悬停提示、CSS 即可驱动虚线流动动画。</p>
+  </div>
+</div>
+
+</body>
+</html>

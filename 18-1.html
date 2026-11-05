@@ -1,0 +1,196 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：Canvas 动画 — 粒子文字"何汶军"（粒子聚合 / 鼠标排斥 / 换色 / 重新聚合）
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-1 Canvas 动画 — 粒子文字</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; color: #333; background: #f5f6f7; padding: 16px 0 60px; }
+
+  .hwj_back { display: inline-block; margin: 0 0 12px 24px; padding: 6px 14px; background: #2563eb; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  .hwj_wrap { width: 1010px; margin: 0 auto; }
+  .hwj_head { padding: 18px 0 14px; }
+  .hwj_head h1 { font-size: 24px; }
+  .hwj_head p { color: #666; margin-top: 6px; }
+  .hwj_head code { background: #eef2ff; padding: 2px 8px; border-radius: 4px; color: #4338ca; font-size: 12px; }
+
+  .hwj_toolbar { margin-bottom: 12px; }
+  .hwj_btn {
+    padding: 9px 22px; margin-right: 10px;
+    background: #2563eb; color: #fff; border: 0; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .hwj_btn:hover { background: #1d4ed8; }
+  .hwj_btn.hwj_ghost { background: #fff; color: #2563eb; border: 1px solid #2563eb; }
+  .hwj_info { color: #666; font-size: 13px; margin-left: 6px; }
+
+  .hwj_stage {
+    background: #0f172a;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  }
+  .hwj_stage canvas { display: block; cursor: crosshair; }
+
+  .hwj_card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-top: 18px; }
+  .hwj_card h2 { font-size: 16px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .hwj_card code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #b91c1c; }
+  .hwj_card p { margin: 6px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_wrap">
+  <div class="hwj_head">
+    <h1>Canvas 动画 — 粒子文字「何汶军」</h1>
+    <p>几百个小粒子从四处飞来，<b>聚合成"何汶军"三个大字</b>；移动鼠标可以把粒子推开，松手后它们会自动归位。</p>
+  </div>
+
+  <div class="hwj_toolbar">
+    <button class="hwj_btn" onclick="hwj_scatter()">💥 重新聚合</button>
+    <button class="hwj_btn hwj_ghost" onclick="hwj_changeColor()">🎨 换个颜色</button>
+    <span class="hwj_info" id="hwj_info"></span>
+  </div>
+
+  <div class="hwj_stage">
+    <canvas id="hwj_canvas" width="1010" height="430"></canvas>
+  </div>
+
+  <div class="hwj_card">
+    <h2>实现原理</h2>
+    <p>① 先在<b>离屏 canvas</b> 上用大号字体画出"何汶军"，再用 <code>getImageData()</code> 逐像素采样，凡是文字覆盖到的位置就生成一个粒子目标点。</p>
+    <p>② 每个粒子按 <code>速度 += (目标位置 - 当前位置) × 0.02</code> 的弹性缓动飞向目标，形成聚合动画。</p>
+    <p>③ 监听 <code>mousemove</code>，粒子距离鼠标 60px 以内时被推开，松开后继续回到自己的目标点。</p>
+    <p>④ 整个动画由 <code>requestAnimationFrame</code> 以约 60 帧/秒驱动。</p>
+  </div>
+</div>
+
+<script>
+  var hwj_canvas = document.getElementById('hwj_canvas');
+  var hwj_ctx = hwj_canvas.getContext('2d');
+  var hwj_W = hwj_canvas.width, hwj_H = hwj_canvas.height;
+
+  var hwj_particles = [];          // 粒子数组
+  var hwj_mouse = { x: -9999, y: -9999 };
+  var hwj_hue = 195;               // 基础色相（蓝青色）
+  var hwj_TEXT = '何汶军';
+
+  /* ① 离屏 canvas 采样文字像素 → 生成粒子目标点 */
+  function hwj_buildTargets() {
+    var off = document.createElement('canvas');
+    off.width = hwj_W; off.height = hwj_H;
+    var octx = off.getContext('2d');
+
+    octx.font = 'bold 190px "Microsoft YaHei", sans-serif';
+    octx.textAlign = 'center';
+    octx.textBaseline = 'middle';
+    octx.fillStyle = '#fff';
+    octx.fillText(hwj_TEXT, hwj_W / 2, hwj_H / 2 + 10);
+
+    var data = octx.getImageData(0, 0, hwj_W, hwj_H).data;
+    var targets = [];
+    var gap = 4;                                    // 采样间隔（越小粒子越多越密）
+    for (var y = 0; y < hwj_H; y += gap) {
+      for (var x = 0; x < hwj_W; x += gap) {
+        if (data[(y * hwj_W + x) * 4 + 3] > 128) {  // alpha > 128 → 文字区域
+          targets.push({ x: x, y: y });
+        }
+      }
+    }
+    return targets;
+  }
+
+  /* ② 初始化 / 重新聚合：粒子从随机位置飞向目标 */
+  function hwj_init() {
+    var targets = hwj_buildTargets();
+    hwj_particles = targets.map(function (t, i) {
+      return {
+        x: Math.random() * hwj_W,
+        y: Math.random() * hwj_H,
+        tx: t.x, ty: t.y,                            // 目标点
+        vx: 0, vy: 0,
+        size: 1.4 + Math.random() * 1.2,
+        hue: hwj_hue + Math.random() * 40 - 20       // 同色系随机微调
+      };
+    });
+    document.getElementById('hwj_info').textContent = '粒子数量：' + hwj_particles.length;
+  }
+
+  /* ③ 动画主循环 */
+  function hwj_tick() {
+    hwj_ctx.fillStyle = 'rgba(15, 23, 42, 0.28)';    // 半透明清屏 → 拖尾残影
+    hwj_ctx.fillRect(0, 0, hwj_W, hwj_H);
+
+    for (var i = 0; i < hwj_particles.length; i++) {
+      var p = hwj_particles[i];
+
+      /* 弹性缓动：飞向目标点 */
+      p.vx += (p.tx - p.x) * 0.02;
+      p.vy += (p.ty - p.y) * 0.02;
+
+      /* 鼠标排斥：60px 范围内被推开 */
+      var dx = p.x - hwj_mouse.x, dy = p.y - hwj_mouse.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 60 && dist > 0.01) {
+        var force = (60 - dist) / 60 * 3;
+        p.vx += dx / dist * force;
+        p.vy += dy / dist * force;
+      }
+
+      p.vx *= 0.9; p.vy *= 0.9;                      // 阻尼
+      p.x += p.vx; p.y += p.vy;
+
+      /* 到家后轻微呼吸浮动 */
+      var wob = Math.sin((Date.now() + i * 13) / 600) * 0.6;
+
+      hwj_ctx.fillStyle = 'hsl(' + p.hue + ', 90%, 62%)';
+      hwj_ctx.fillRect(p.x, p.y + wob, p.size, p.size);
+    }
+    requestAnimationFrame(hwj_tick);
+  }
+
+  /* 重新聚合：把粒子位置打乱，重新飞回 */
+  function hwj_scatter() {
+    for (var i = 0; i < hwj_particles.length; i++) {
+      var p = hwj_particles[i];
+      p.x = Math.random() * hwj_W;
+      p.y = Math.random() * hwj_H;
+      p.vx = (Math.random() - 0.5) * 16;
+      p.vy = (Math.random() - 0.5) * 16;
+    }
+  }
+
+  /* 换颜色 */
+  function hwj_changeColor() {
+    hwj_hue = Math.floor(Math.random() * 360);
+    for (var i = 0; i < hwj_particles.length; i++) {
+      hwj_particles[i].hue = hwj_hue + Math.random() * 40 - 20;
+    }
+  }
+
+  /* 鼠标交互 */
+  hwj_canvas.addEventListener('mousemove', function (e) {
+    var rect = hwj_canvas.getBoundingClientRect();
+    hwj_mouse.x = e.clientX - rect.left;
+    hwj_mouse.y = e.clientY - rect.top;
+  });
+  hwj_canvas.addEventListener('mouseleave', function () {
+    hwj_mouse.x = -9999; hwj_mouse.y = -9999;
+  });
+
+  hwj_init();
+  hwj_tick();
+</script>
+
+</body>
+</html>

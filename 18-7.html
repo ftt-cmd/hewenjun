@@ -1,0 +1,322 @@
+<!--
+  姓名：袁磊
+  日期：2026-11-05
+  功能名称：基于 ECharts 的全国销售数据大屏 — 三列布局，中间上方为中国地图地理信息图
+  echarts.min.js / china.json 已本地化到 ./cdn/，离线可运行
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-7 ECharts 数据大屏 — 全国销售实时监控</title>
+<script src="./cdn/echarts.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 "Microsoft YaHei", sans-serif; background: #060d1f; color: #d7e6ff; overflow-x: hidden; }
+
+  .hwj_back { position: fixed; left: 14px; top: 84px; z-index: 99; padding: 6px 14px; background: rgba(37,99,235,.85); color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+  .hwj_back:hover { background: #1d4ed8; }
+
+  /* ===== 大屏容器：1200 设计宽，等比缩放居中 ===== */
+  .hwj_screen { width: 1400px; height: 820px; margin: 0 auto; padding: 10px 14px 14px; display: flex; flex-direction: column;
+    background: radial-gradient(1200px 500px at 50% -10%, #0e2a52 0%, #060d1f 60%); }
+
+  /* ===== 顶部标题栏 ===== */
+  .hwj_header { position: relative; height: 58px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, rgba(20,60,120,.55), rgba(20,60,120,0)); border-bottom: 1px solid rgba(56,189,248,.35); }
+  .hwj_header h1 { font-size: 26px; letter-spacing: 6px; color: #eaf6ff;
+    text-shadow: 0 0 18px rgba(56,189,248,.8), 0 0 40px rgba(56,189,248,.4); }
+  .hwj_clock { position: absolute; right: 16px; font-family: Consolas, monospace; color: #7dd3fc; font-size: 15px; }
+  .hwj_sub { position: absolute; left: 16px; color: #64748b; font-size: 13px; letter-spacing: 2px; }
+
+  /* ===== 三列主体 ===== */
+  .hwj_body { flex: 1; display: grid; grid-template-columns: 340px 1fr 340px; gap: 14px; margin-top: 12px; min-height: 0; }
+  .hwj_col { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  .hwj_mid { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+
+  .hwj_panel { position: relative; background: rgba(10, 26, 54, .72); border: 1px solid rgba(56,189,248,.28);
+    border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; min-height: 0;
+    box-shadow: inset 0 0 24px rgba(14, 82, 158, .25); }
+  .hwj_panel::before, .hwj_panel::after { content: ""; position: absolute; width: 14px; height: 14px; border: 2px solid #38bdf8; }
+  .hwj_panel::before { left: -1px; top: -1px; border-right: none; border-bottom: none; }
+  .hwj_panel::after { right: -1px; bottom: -1px; border-left: none; border-top: none; }
+  .hwj_panel h3 { font-size: 15px; color: #7dd3fc; letter-spacing: 2px; padding: 2px 0 6px 10px; border-left: 3px solid #38bdf8; margin-bottom: 6px; }
+  .hwj_chart { flex: 1; min-height: 0; }
+
+  /* 左列 KPI */
+  .hwj_kpis { flex: 0 0 148px; }
+  .hwj_kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 100%; }
+  .hwj_kpi { background: rgba(14, 42, 84, .6); border: 1px solid rgba(56,189,248,.22); border-radius: 5px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .hwj_kpi .hwj_num { font-family: Consolas, monospace; font-size: 24px; font-weight: bold; color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,.5); }
+  .hwj_kpi.cyan .hwj_num { color: #38bdf8; text-shadow: 0 0 12px rgba(56,189,248,.5); }
+  .hwj_kpi.green .hwj_num { color: #34d399; text-shadow: 0 0 12px rgba(52,211,153,.5); }
+  .hwj_kpi.pink .hwj_num { color: #f472b6; text-shadow: 0 0 12px rgba(244,114,182,.5); }
+  .hwj_kpi .hwj_label { font-size: 12px; color: #93b4d8; margin-top: 2px; }
+
+  /* 右列滚动订单列表 */
+  .hwj_orders { flex: 0 0 268px; overflow: hidden; }
+  .hwj_order-head, .hwj_order-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 70px; font-size: 12px; padding: 4px 4px; }
+  .hwj_order-head { color: #7dd3fc; border-bottom: 1px dashed rgba(56,189,248,.3); }
+  .hwj_order-list { overflow: hidden; height: calc(100% - 30px); }
+  .hwj_order-row { color: #b9d2ee; border-bottom: 1px solid rgba(56,189,248,.08); animation: hwj_in .4s ease; }
+  .hwj_order-row .hwj_amt { color: #fbbf24; font-family: Consolas, monospace; }
+  @keyframes hwj_in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<a class="hwj_back" href="index.html">← 返回首页</a>
+
+<div class="hwj_screen">
+  <!-- 顶部标题 -->
+  <header class="hwj_header">
+    <span class="hwj_sub">DATA VISUALIZATION · 2026</span>
+    <h1>全国销售数据实时监控大屏</h1>
+    <span class="hwj_clock" id="hwj_clock">--:--:--</span>
+  </header>
+
+  <div class="hwj_body">
+    <!-- 左列 -->
+    <div class="hwj_col">
+      <div class="hwj_panel hwj_kpis">
+        <h3>核心指标</h3>
+        <div class="hwj_kpi-grid">
+          <div class="hwj_kpi cyan"><span class="hwj_num" id="hwj_k_gmv">0</span><span class="hwj_label">今日销售额（万元）</span></div>
+          <div class="hwj_kpi"><span class="hwj_num" id="hwj_k_order">0</span><span class="hwj_label">今日订单数</span></div>
+          <div class="hwj_kpi green"><span class="hwj_num" id="hwj_k_user">0</span><span class="hwj_label">活跃用户数</span></div>
+          <div class="hwj_kpi pink"><span class="hwj_num" id="hwj_k_conv">0%</span><span class="hwj_label">转化率</span></div>
+        </div>
+      </div>
+      <div class="hwj_panel">
+        <h3>各渠道销售额</h3>
+        <div class="hwj_chart" id="hwj_bar"></div>
+      </div>
+    </div>
+
+    <!-- 中列：上=中国地图，下=趋势折线 -->
+    <div class="hwj_mid">
+      <div class="hwj_panel" style="flex: 1.6;">
+        <h3>全国订单热力分布</h3>
+        <div class="hwj_chart" id="hwj_map"></div>
+      </div>
+      <div class="hwj_panel" style="flex: 1;">
+        <h3>24 小时销售与客流趋势</h3>
+        <div class="hwj_chart" id="hwj_line"></div>
+      </div>
+    </div>
+
+    <!-- 右列 -->
+    <div class="hwj_col">
+      <div class="hwj_panel hwj_orders">
+        <h3>实时订单播报</h3>
+        <div class="hwj_order-head"><span>城市</span><span>商品</span><span>时间</span><span>金额</span></div>
+        <div class="hwj_order-list" id="hwj_order_list"></div>
+      </div>
+      <div class="hwj_panel">
+        <h3>品类销售占比</h3>
+        <div class="hwj_chart" id="hwj_pie"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ============ 时钟 ============ */
+  function hwj_tick() {
+    var d = new Date();
+    function p(n) { return n < 10 ? '0' + n : n; }
+    document.getElementById('hwj_clock').textContent =
+      d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '  ' +
+      p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+  setInterval(hwj_tick, 1000); hwj_tick();
+
+  /* ============ KPI 数字滚动 ============ */
+  function hwj_roll(id, target, suffix, decimals) {
+    var el = document.getElementById(id), cur = 0, step = target / 60;
+    var timer = setInterval(function () {
+      cur += step;
+      if (cur >= target) { cur = target; clearInterval(timer); }
+      el.textContent = cur.toLocaleString(undefined, { minimumFractionDigits: decimals || 0, maximumFractionDigits: decimals || 0 }) + (suffix || '');
+    }, 16);
+  }
+
+  /* ============ 公共暗色配置 ============ */
+  var hwj_axisStyle = {
+    axisLine: { lineStyle: { color: 'rgba(125,211,252,.4)' } },
+    axisLabel: { color: '#8fb3d9', fontSize: 11 },
+    splitLine: { lineStyle: { color: 'rgba(56,189,248,.12)' } }
+  };
+
+  /* ① 渠道柱状图 */
+  var hwj_barChart = echarts.init(document.getElementById('hwj_bar'));
+  hwj_barChart.setOption({
+    grid: { left: 44, right: 14, top: 24, bottom: 24 },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: ['淘宝', '京东', '抖音', '拼多多', '自营', '微信'], axisLabel: hwj_axisStyle.axisLabel, axisLine: hwj_axisStyle.axisLine },
+    yAxis: { type: 'value', axisLabel: hwj_axisStyle.axisLabel, splitLine: hwj_axisStyle.splitLine },
+    series: [{
+      type: 'bar', barWidth: 14,
+      data: [326, 284, 412, 238, 175, 129],
+      itemStyle: {
+        borderRadius: [4, 4, 0, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#38bdf8' }, { offset: 1, color: '#1d4ed8' }
+        ])
+      },
+      label: { show: true, position: 'top', color: '#7dd3fc', fontSize: 10 }
+    }]
+  });
+
+  /* ② 品类饼图（环形） */
+  var hwj_pieChart = echarts.init(document.getElementById('hwj_pie'));
+  hwj_pieChart.setOption({
+    tooltip: { trigger: 'item' },
+    legend: { bottom: 0, textStyle: { color: '#8fb3d9', fontSize: 11 }, itemWidth: 12, itemHeight: 8 },
+    series: [{
+      type: 'pie', radius: ['42%', '68%'], center: ['50%', '44%'],
+      itemStyle: { borderColor: '#0a1a36', borderWidth: 2 },
+      label: { color: '#b9d2ee', fontSize: 11, formatter: '{b}\n{d}%' },
+      data: [
+        { value: 428, name: '数码家电', itemStyle: { color: '#38bdf8' } },
+        { value: 356, name: '服饰鞋包', itemStyle: { color: '#34d399' } },
+        { value: 294, name: '美妆个护', itemStyle: { color: '#f472b6' } },
+        { value: 232, name: '食品生鲜', itemStyle: { color: '#fbbf24' } },
+        { value: 158, name: '家居日用', itemStyle: { color: '#a78bfa' } }
+      ]
+    }]
+  });
+
+  /* ③ 24 小时趋势折线 */
+  var hwj_lineChart = echarts.init(document.getElementById('hwj_line'));
+  var hwj_hours = [], hwj_sales = [], hwj_flow = [];
+  for (var h = 0; h < 24; h++) {
+    hwj_hours.push((h < 10 ? '0' : '') + h + ':00');
+    var base = Math.sin((h - 4) / 24 * Math.PI * 2) * 30 + 50;
+    if (h >= 10 && h <= 14) { base += 55; }                  // 午高峰
+    if (h >= 19 && h <= 22) { base += 85; }                  // 晚高峰
+    hwj_sales.push(Math.round(base + Math.random() * 18));
+    hwj_flow.push(Math.round(base * 9 + Math.random() * 120));
+  }
+  hwj_lineChart.setOption({
+    grid: { left: 44, right: 52, top: 30, bottom: 26 },
+    tooltip: { trigger: 'axis' },
+    legend: { top: 0, right: 0, textStyle: { color: '#8fb3d9', fontSize: 11 }, itemWidth: 14 },
+    xAxis: { type: 'category', boundaryGap: false, data: hwj_hours, axisLabel: hwj_axisStyle.axisLabel, axisLine: hwj_axisStyle.axisLine },
+    yAxis: [
+      { type: 'value', name: '万元', nameTextStyle: { color: '#64748b' }, axisLabel: hwj_axisStyle.axisLabel, splitLine: hwj_axisStyle.splitLine },
+      { type: 'value', name: '人次', nameTextStyle: { color: '#64748b' }, axisLabel: hwj_axisStyle.axisLabel, splitLine: { show: false } }
+    ],
+    series: [
+      {
+        name: '销售额（万元）', type: 'line', smooth: true, data: hwj_sales, symbol: 'none',
+        lineStyle: { width: 2, color: '#38bdf8' },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(56,189,248,.35)' }, { offset: 1, color: 'rgba(56,189,248,0)' }]) }
+      },
+      {
+        name: '客流量（人次）', type: 'line', smooth: true, yAxisIndex: 1, data: hwj_flow, symbol: 'none',
+        lineStyle: { width: 2, color: '#fbbf24' }
+      }
+    ]
+  });
+
+  /* ============ 中国地图（fetch 本地 china.json 后注册） ============ */
+  var hwj_mapChart = echarts.init(document.getElementById('hwj_map'));
+  var hwj_cities = [
+    { name: '北京', value: [116.41, 39.90, 286] }, { name: '上海', value: [121.47, 31.23, 342] },
+    { name: '广州', value: [113.26, 23.13, 265] }, { name: '深圳', value: [114.06, 22.55, 298] },
+    { name: '杭州', value: [120.15, 30.28, 236] }, { name: '成都', value: [104.07, 30.57, 214] },
+    { name: '武汉', value: [114.31, 30.59, 168] }, { name: '西安', value: [108.94, 34.34, 142] },
+    { name: '重庆', value: [106.55, 29.56, 176] }, { name: '南京', value: [118.78, 32.06, 158] },
+    { name: '长沙', value: [112.94, 28.23, 124] }, { name: '哈尔滨', value: [126.53, 45.80, 86] },
+    { name: '乌鲁木齐', value: [87.62, 43.82, 62] }, { name: '昆明', value: [102.71, 25.04, 92] },
+    { name: '三亚', value: [109.51, 18.25, 58] }, { name: '拉萨', value: [91.11, 29.65, 34] }
+  ];
+  fetch('./cdn/china.json')
+    .then(function (res) { return res.json(); })
+    .then(function (geoJson) {
+      echarts.registerMap('china', geoJson);
+      hwj_mapChart.setOption({
+        tooltip: {
+          formatter: function (p) {
+            var v = p.value && p.value.length ? p.value[2] : 0;
+            return (p.name || '') + '<br/>订单量：<b style="color:#fbbf24">' + v + '</b> 单';
+          }
+        },
+        visualMap: {
+          min: 0, max: 350, left: 10, bottom: 8,
+          text: ['高', '低'], textStyle: { color: '#8fb3d9', fontSize: 11 },
+          inRange: { color: ['#0e2a52', '#1d4ed8', '#38bdf8', '#fbbf24'] },
+          calculable: false
+        },
+        geo: {
+          map: 'china', roam: true,
+          layoutCenter: ['50%', '52%'], layoutSize: '92%',
+          itemStyle: { areaColor: '#0e2a52', borderColor: 'rgba(56,189,248,.55)', borderWidth: 1,
+            shadowColor: 'rgba(56,189,248,.35)', shadowBlur: 14 },
+          emphasis: { label: { color: '#fff' }, itemStyle: { areaColor: '#1d4ed8' } }
+        },
+        series: [{
+          type: 'effectScatter', coordinateSystem: 'geo',
+          data: hwj_cities,
+          symbolSize: function (v) { return 4 + v[2] / 28; },
+          rippleEffect: { brushType: 'stroke', scale: 3.2 },
+          itemStyle: { color: '#fbbf24', shadowBlur: 10, shadowColor: '#fbbf24' },
+          label: { show: false }, zlevel: 2
+        }]
+      });
+    });
+
+  /* ============ 实时订单播报（定时滚动） ============ */
+  var hwj_orderCities = ['上海', '北京', '深圳', '杭州', '成都', '广州', '武汉', '南京', '西安', '重庆', '长沙', '苏州'];
+  var hwj_orderGoods = ['数码家电', '服饰鞋包', '美妆个护', '食品生鲜', '家居日用'];
+  var hwj_listEl = document.getElementById('hwj_order_list');
+
+  function hwj_pushOrder() {
+    function p(n) { return n < 10 ? '0' + n : n; }
+    var d = new Date();
+    var row = document.createElement('div');
+    row.className = 'hwj_order-row';
+    row.innerHTML =
+      '<span>' + hwj_orderCities[Math.floor(Math.random() * hwj_orderCities.length)] + '</span>' +
+      '<span>' + hwj_orderGoods[Math.floor(Math.random() * hwj_orderGoods.length)] + '</span>' +
+      '<span>' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '</span>' +
+      '<span class="hwj_amt">¥' + (Math.random() * 2400 + 60).toFixed(2) + '</span>';
+    hwj_listEl.insertBefore(row, hwj_listEl.firstChild);
+    while (hwj_listEl.children.length > 20) { hwj_listEl.removeChild(hwj_listEl.lastChild); }
+  }
+  for (var i = 0; i < 8; i++) { hwj_pushOrder(); }
+  setInterval(hwj_pushOrder, 2000);
+
+  /* ============ KPI 启动 + 定时增长 ============ */
+  var hwj_gmv = 186.5, hwj_orderCnt = 4218;
+  hwj_roll('hwj_k_gmv', hwj_gmv, '', 1);
+  hwj_roll('hwj_k_order', hwj_orderCnt);
+  hwj_roll('hwj_k_user', 136542);
+  hwj_roll('hwj_k_conv', 6.8, '%', 1);
+  setInterval(function () {
+    hwj_gmv += Math.random() * 1.6;
+    hwj_orderCnt += Math.floor(Math.random() * 6) + 1;
+    document.getElementById('hwj_k_gmv').textContent = hwj_gmv.toFixed(1);
+    document.getElementById('hwj_k_order').textContent = hwj_orderCnt.toLocaleString();
+  }, 2000);
+
+  /* ============ 自适应缩放：等比缩放整个大屏 ============ */
+  function hwj_fit() {
+    var screen = document.querySelector('.hwj_screen');
+    var scale = Math.min(document.documentElement.clientWidth / 1400, document.documentElement.clientHeight / 820);
+    scale = Math.min(scale, 1.15);
+    screen.style.transform = 'scale(' + scale + ')';
+    screen.style.transformOrigin = 'top center';
+    document.body.style.height = 820 * scale + 'px';
+    setTimeout(function () {
+      hwj_barChart.resize(); hwj_pieChart.resize(); hwj_lineChart.resize(); hwj_mapChart.resize();
+    }, 60);
+  }
+  window.addEventListener('resize', hwj_fit); hwj_fit();
+</script>
+
+</body>
+</html>
