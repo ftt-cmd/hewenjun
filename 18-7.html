@@ -30,6 +30,21 @@
   .hwj_clock { position: absolute; right: 16px; font-family: Consolas, monospace; color: #7dd3fc; font-size: 15px; }
   .hwj_sub { position: absolute; left: 16px; color: #64748b; font-size: 13px; letter-spacing: 2px; }
 
+  /* ===== 公告跑马灯 ===== */
+  .hwj_notice { height: 30px; margin-top: 8px; display: flex; align-items: center; overflow: hidden; white-space: nowrap;
+    background: rgba(10, 26, 54, .6); border: 1px solid rgba(56,189,248,.2); border-radius: 5px; }
+  .hwj_notice .hwj_tag { flex: 0 0 auto; padding: 0 12px; margin-left: 6px; font-size: 12px; color: #060d1f;
+    background: linear-gradient(90deg, #38bdf8, #0ea5e9); border-radius: 3px; font-weight: bold; }
+  .hwj_notice .hwj_scroll { flex: 1; overflow: hidden; }
+  .hwj_notice .hwj_scroll span { display: inline-block; padding-left: 100%; color: #b9d2ee; font-size: 13px;
+    animation: hwj_marquee 22s linear infinite; }
+  @keyframes hwj_marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+  /* KPI 趋势角标 */
+  .hwj_trend { font-size: 11px; margin-top: 2px; }
+  .hwj_trend.up { color: #34d399; }
+  .hwj_trend.down { color: #f87171; }
+
   /* ===== 三列主体 ===== */
   .hwj_body { flex: 1; display: grid; grid-template-columns: 340px 1fr 340px; gap: 14px; margin-top: 12px; min-height: 0; }
   .hwj_col { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
@@ -77,17 +92,27 @@
     <span class="hwj_clock" id="hwj_clock">--:--:--</span>
   </header>
 
+  <!-- 公告跑马灯 -->
+  <div class="hwj_notice">
+    <span class="hwj_tag">实时公告</span>
+    <div class="hwj_scroll"><span>【公告】双十一大促活动已于 11 月 1 日开启，各渠道流量环比增长 46%，请各部门重点关注华东、华南区域仓的库存周转与物流时效，保障大促订单履约体验！</span></div>
+  </div>
+
   <div class="hwj_body">
     <!-- 左列 -->
     <div class="hwj_col">
       <div class="hwj_panel hwj_kpis">
         <h3>核心指标</h3>
         <div class="hwj_kpi-grid">
-          <div class="hwj_kpi cyan"><span class="hwj_num" id="hwj_k_gmv">0</span><span class="hwj_label">今日销售额（万元）</span></div>
-          <div class="hwj_kpi"><span class="hwj_num" id="hwj_k_order">0</span><span class="hwj_label">今日订单数</span></div>
-          <div class="hwj_kpi green"><span class="hwj_num" id="hwj_k_user">0</span><span class="hwj_label">活跃用户数</span></div>
-          <div class="hwj_kpi pink"><span class="hwj_num" id="hwj_k_conv">0%</span><span class="hwj_label">转化率</span></div>
+          <div class="hwj_kpi cyan"><span class="hwj_num" id="hwj_k_gmv">0</span><span class="hwj_label">今日销售额（万元）</span><span class="hwj_trend up">▲ 环比 +12.4%</span></div>
+          <div class="hwj_kpi"><span class="hwj_num" id="hwj_k_order">0</span><span class="hwj_label">今日订单数</span><span class="hwj_trend up">▲ 环比 +8.6%</span></div>
+          <div class="hwj_kpi green"><span class="hwj_num" id="hwj_k_user">0</span><span class="hwj_label">活跃用户数</span><span class="hwj_trend up">▲ 环比 +5.2%</span></div>
+          <div class="hwj_kpi pink"><span class="hwj_num" id="hwj_k_conv">0%</span><span class="hwj_label">转化率</span><span class="hwj_trend down">▼ 环比 -0.3%</span></div>
         </div>
+      </div>
+      <div class="hwj_panel" style="flex: 0 0 172px;">
+        <h3>月度销售目标完成率</h3>
+        <div class="hwj_chart" id="hwj_gauge"></div>
       </div>
       <div class="hwj_panel">
         <h3>各渠道销售额</h3>
@@ -170,7 +195,32 @@
     }]
   });
 
-  /* ② 品类饼图（环形） */
+  /* ② 仪表盘：月度销售目标完成率 */
+  var hwj_gaugeChart = echarts.init(document.getElementById('hwj_gauge'));
+  var hwj_gaugeVal = 76.4;
+  function hwj_gaugeOption() {
+    return {
+      series: [{
+        type: 'gauge', startAngle: 210, endAngle: -30, min: 0, max: 100,
+        radius: '96%', center: ['50%', '58%'],
+        progress: { show: true, width: 10, roundCap: true,
+          itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#0ea5e9' }, { offset: 1, color: '#38bdf8' }]) } },
+        axisLine: { lineStyle: { width: 10, color: [[1, 'rgba(56,189,248,.15)']] } },
+        axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
+        pointer: { show: false }, title: { show: false },
+        detail: { valueAnimation: true, offsetCenter: [0, '-4%'],
+          formatter: '{value}%', color: '#fbbf24', fontSize: 26, fontFamily: 'Consolas' },
+        data: [{ value: hwj_gaugeVal }]
+      }]
+    };
+  }
+  hwj_gaugeChart.setOption(hwj_gaugeOption());
+  setInterval(function () {                              // 缓慢爬升模拟实时进度
+    hwj_gaugeVal = Math.min(hwj_gaugeVal + Math.random() * 0.4, 100);
+    hwj_gaugeChart.setOption({ series: [{ data: [{ value: +hwj_gaugeVal.toFixed(1) }] }] });
+  }, 3000);
+
+  /* ③ 品类饼图（环形） */
   var hwj_pieChart = echarts.init(document.getElementById('hwj_pie'));
   hwj_pieChart.setOption({
     tooltip: { trigger: 'item' },
@@ -189,7 +239,7 @@
     }]
   });
 
-  /* ③ 24 小时趋势折线 */
+  /* ④ 24 小时趋势折线 */
   var hwj_lineChart = echarts.init(document.getElementById('hwj_line'));
   var hwj_hours = [], hwj_sales = [], hwj_flow = [];
   for (var h = 0; h < 24; h++) {
@@ -264,7 +314,15 @@
           symbolSize: function (v) { return 4 + v[2] / 28; },
           rippleEffect: { brushType: 'stroke', scale: 3.2 },
           itemStyle: { color: '#fbbf24', shadowBlur: 10, shadowColor: '#fbbf24' },
-          label: { show: false }, zlevel: 2
+          label: { show: false }, zlevel: 3
+        }, {
+          /* 飞线：各城市 → 上海（华东枢纽） */
+          type: 'lines', coordinateSystem: 'geo', zlevel: 2,
+          effect: { show: true, period: 4.2, trailLength: 0.5, symbol: 'arrow', symbolSize: 6, color: '#7dd3fc' },
+          lineStyle: { color: 'rgba(125,211,252,.28)', width: 1, curveness: 0.32 },
+          data: hwj_cities
+            .filter(function (c) { return c.name !== '上海'; })
+            .map(function (c) { return { coords: [[c.value[0], c.value[1]], [121.47, 31.23]] }; })
         }]
       });
     });
@@ -312,7 +370,7 @@
     screen.style.transformOrigin = 'top center';
     document.body.style.height = 820 * scale + 'px';
     setTimeout(function () {
-      hwj_barChart.resize(); hwj_pieChart.resize(); hwj_lineChart.resize(); hwj_mapChart.resize();
+      hwj_barChart.resize(); hwj_pieChart.resize(); hwj_lineChart.resize(); hwj_mapChart.resize(); hwj_gaugeChart.resize();
     }, 60);
   }
   window.addEventListener('resize', hwj_fit); hwj_fit();
